@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarehouseManager.Data;
 
 namespace WarehouseManager.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230301203253_orderAndOrderItem")]
+    partial class orderAndOrderItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,7 +235,6 @@ namespace WarehouseManager.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
@@ -242,16 +243,6 @@ namespace WarehouseManager.Data.Migrations
                     b.HasKey("ItemID");
 
                     b.ToTable("Items");
-
-                    b.HasData(
-                        new
-                        {
-                            ItemID = 1,
-                            ItemAmount = 1,
-                            ItemDescription = "This is a test item",
-                            ItemName = "Test Item",
-                            Price = 1.5
-                        });
                 });
 
             modelBuilder.Entity("WarehouseManager.Models.Order", b =>
@@ -279,17 +270,6 @@ namespace WarehouseManager.Data.Migrations
                     b.HasKey("OrderID");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderID = 1,
-                            Cancelled = false,
-                            Completed = false,
-                            CustomerID = 1,
-                            ItemCount = 0,
-                            OrderCost = 0m
-                        });
                 });
 
             modelBuilder.Entity("WarehouseManager.Models.OrderItem", b =>
@@ -310,14 +290,6 @@ namespace WarehouseManager.Data.Migrations
                     b.HasIndex("ItemID");
 
                     b.ToTable("OrderItems");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            ItemID = 1,
-                            OrderID = 1
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

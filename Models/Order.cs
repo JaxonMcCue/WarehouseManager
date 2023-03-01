@@ -10,6 +10,7 @@ namespace WarehouseManager.Models
         public int OrderID { get; set; }
         public int CustomerID { get; set; }
         public decimal OrderCost { get; set; }
+        public int ItemCount { get; set; }
         public bool Completed { get; set; }
         public bool Cancelled { get; set; }
 
@@ -18,6 +19,7 @@ namespace WarehouseManager.Models
         public Order(decimal orderCost)
         {
             OrderCost = orderCost;
+            ItemCount = 0;
             Completed = false;
             Cancelled = false;
         }

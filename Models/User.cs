@@ -11,7 +11,7 @@ namespace WarehouseManager.Models
     {
         public int CustomerID { get; set; }
 
-        public Customer customer { get; set; }
+        //public Customer customer { get; set; }
 
         [NotMapped]
         public IList<String> RoleNames { get; set; }

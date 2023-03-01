@@ -7,7 +7,9 @@ namespace WarehouseManager.Models
 {
     public class OrderItem
     {
+        public int ID { get; set; }
         public int ItemID { get; set; }
+        public Item Item { get; set; }
         public int OrderID { get; set; }
     }
 }

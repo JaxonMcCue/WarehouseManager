@@ -22,5 +22,24 @@ namespace WarehouseManager.Controllers
         {
             return View(_context.Items.ToList());
         }
+
+        [HttpGet]
+        public IActionResult AddItem()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddItem(Item item)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(item);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(DisplayItems));
+            }
+            return View(item);
+        }
     }
 }

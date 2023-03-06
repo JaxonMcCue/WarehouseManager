@@ -44,7 +44,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DeleteItem(int id)
+        public async Task<IActionResult> DeleteItem(int? id)
         {
             if(id == null)
             {
@@ -68,6 +68,70 @@ namespace WarehouseManager.Controllers
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(DisplayItems));
+        }
+
+        public async Task<IActionResult> ViewItem(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return View(item);
+        }
+
+        public async Task<IActionResult> EditItem(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return View(item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditItem(int id, Item item)
+        {
+            if (id != item.ItemID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(item);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!(_context.Items.Any(i => i.ItemID == item.ItemID)))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(DisplayItems));
+            }
+            return View(item);
         }
     }
 }

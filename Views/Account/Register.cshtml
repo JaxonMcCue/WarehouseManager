@@ -1,0 +1,196 @@
+﻿@model WarehouseManager.Models.ViewModels.RegisterViewModel;
+@{
+    ViewData["Title"] = "Register";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="jquery.maskedinput.js" type="text/javascript"></script>
+<script src="~/lib/cleave/dist/cleave.min.js"></script>
+<script src="~/js/.js"></script>
+<h2>Register</h2>
+
+<script>
+    var cleave = new Cleave('.input-phone', {
+        numeral: true,
+        delimiters: "-",
+        blocks: [3, 3, 4]
+    });
+</script>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" asp-action="Register">
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Username:</label>
+        <div class="col-md-4">
+            <input asp-for="UserName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Email:</label>
+        <div class="col-md-4">
+            <input asp-for="Email" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">First Name:</label>
+        <div class="col-md-4">
+            <input asp-for="BusinessName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="BusinessName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">First Name:</label>
+        <div class="col-md-4">
+            <input asp-for="FirstName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Last Name:</label>
+        <div class="col-md-4">
+            <input asp-for="LastName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Address:</label>
+        <div class="col-md-4">
+            <input asp-for="Address" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">City:</label>
+        <div class="col-md-4">
+            <input asp-for="City" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">State:</label>
+        <div class="col-md-4">
+            <select asp-for="State" class="form-control">
+                <option value=" "></option>
+                <option Value="AL">Alabama</option>
+                <option Value="AK">Alaska</option>
+                <option Value="AZ">Arizona</option>
+                <option Value="AR">Arkansas</option>
+                <option Value="CA">California</option>
+                <option Value="CO">Colorado</option>
+                <option Value="CT">Connecticut</option>
+                <option Value="DC">District of Columbia</option>
+                <option Value="DE">Delaware</option>
+                <option Value="FL">Florida</option>
+                <option Value="GA">Georgia</option>
+                <option Value="HI">Hawaii</option>
+                <option Value="ID">Idaho</option>
+                <option Value="IL">Illinois</option>
+                <option Value="IN">Indiana</option>
+                <option Value="IA">Iowa</option>
+                <option Value="KS">Kansas</option>
+                <option Value="KY">Kentucky</option>
+                <option Value="LA">Louisiana</option>
+                <option Value="ME">Maine</option>
+                <option Value="MD">Maryland</option>
+                <option Value="MA">Massachusetts</option>
+                <option Value="MI">Michigan</option>
+                <option Value="MN">Minnesota</option>
+                <option Value="MS">Mississippi</option>
+                <option Value="MO">Missouri</option>
+                <option Value="MT">Montana</option>
+                <option Value="NE">Nebraska</option>
+                <option Value="NV">Nevada</option>
+                <option Value="NH">New Hampshire</option>
+                <option Value="NJ">New Jersey</option>
+                <option Value="NM">New Mexico</option>
+                <option Value="NY">New York</option>
+                <option Value="NC">North Carolina</option>
+                <option Value="ND">North Dakota</option>
+                <option Value="OH">Ohio</option>
+                <option Value="OK">Oklahoma</option>
+                <option Value="OR">Oregon</option>
+                <option Value="PA">Pennsylvania</option>
+                <option Value="RI">Rhode Island</option>
+                <option Value="SC">South Carolina</option>
+                <option Value="SD">South Dakota</option>
+                <option Value="TN">Tennessee</option>
+                <option Value="TX">Texas</option>
+                <option Value="UT">Utah</option>
+                <option Value="VT">Vermont</option>
+                <option Value="VA">Virginia</option>
+                <option Value="WA">Washington</option>
+                <option Value="WV">West Virginia</option>
+                <option Value="WI">Wisconsin</option>
+                <option Value="WY">Wyoming</option>
+
+            </select>
+        </div>
+        <div class="col">
+            <span asp-validation-for="State" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Zipcode:</label>
+        <div class="col-md-4">
+            <input asp-for="Zip" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Zip" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Phone:</label>
+        <div class="col-md-4">
+            <input class="input-phone" asp-for="Phone" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Password:</label>
+        <div class="col-md-4">
+            <input type="password" asp-for="Password" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <label class="col-form-label col-md-2">Confirm Password:</label>
+        <div class="col-md-4">
+            <input type="password" asp-for="ConfirmPassword"
+                   class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col offset-md-2">
+            <button type="submit" class="btn btn-primary">Register</button>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-primary">Cancel</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col offset-md-2">
+            Already registered? <a asp-action="LogIn">Log In</a>
+        </div>
+    </div>
+
+
+</form>

@@ -183,6 +183,16 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(DisplayItems));
         }
 
+        public async Task<IActionResult> SearchAmt(string searchString)
+        {
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                var items = _context.Items.Where(i => i.ItemName!.Contains(searchString));
+                return View("EditAmt", items);
+            }
+            return RedirectToAction(nameof(EditAmt));
+        }
+
 
     }
 }

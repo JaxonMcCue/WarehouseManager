@@ -2,6 +2,13 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, AuthoringTagHelpers
 
+<form asp-controller="ItemController" method="get">
+    <p>
+        Search: <input type="text" name="SearchString" />
+        <input type="submit" asp-action="SearchAmt" value="Search" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -40,8 +47,8 @@
                         }
                     <form asp-action="EditAmount">
                         <input type="hidden" asp-for="@newItem.ItemID" />
-                        <input asp-for="@newItem.ItemAmount" class="form-control" />
-                        <span asp-validation-for="@newItem.ItemAmount" class="text-danger"></span>
+                        <input asp-for="@newItem.ItemAmount" />
+                        <span asp-validation-for="@newItem.ItemAmount"></span>
                         <input type="submit" value="Save" class="btn btn-primary" />
                     </form>
 

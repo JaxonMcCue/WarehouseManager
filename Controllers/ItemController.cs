@@ -133,5 +133,44 @@ namespace WarehouseManager.Controllers
             }
             return View(item);
         }
+
+        public IActionResult EditAmt()
+        {
+            return View(_context.Items.ToList());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Item/ItemAmount")]
+        public async Task<IActionResult> EditAmount(Item newItem)
+        {
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == newItem.ItemID);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            if(newItem.ItemAmount != item.ItemAmount)
+            {
+                item.ItemAmount = newItem.ItemAmount;
+                try
+                {
+                    _context.Update(item);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!(_context.Items.Any(i => i.ItemID == item.ItemID)))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return RedirectToAction(nameof(EditAmt));
+        }
     }
 }

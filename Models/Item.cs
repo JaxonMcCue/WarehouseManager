@@ -21,5 +21,7 @@ namespace WarehouseManager.Models
         [Required(ErrorMessage = "Please enter amount of your item")]
         [DisplayName("Number of Item")]
         public int ItemAmount { get; set; }
+
+        public Item() { }
     }
 }

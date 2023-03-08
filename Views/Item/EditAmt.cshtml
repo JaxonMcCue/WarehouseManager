@@ -1,0 +1,52 @@
+﻿@model IEnumerable<WarehouseManager.Models.Item>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemAmount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @{
+                        Item newItem = new Item();
+                        newItem = item;
+                        }
+                    <form asp-action="EditAmount">
+                        <input type="hidden" asp-for="@newItem.ItemID" />
+                        <input asp-for="@newItem.ItemAmount" class="form-control" />
+                        <span asp-validation-for="@newItem.ItemAmount" class="text-danger"></span>
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

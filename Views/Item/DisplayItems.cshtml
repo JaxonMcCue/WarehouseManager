@@ -9,6 +9,14 @@
 <p>
     <a asp-action="AddItem">Create New</a>
 </p>
+
+<form asp-controller="ItemController" method="get">
+    <p>
+        Search: <input type="text" name="SearchString" />
+        <input type="submit" asp-action="Search" value="Search" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>

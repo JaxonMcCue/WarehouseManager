@@ -54,9 +54,8 @@ namespace WarehouseManager.Models.ViewModels
         [RegularExpression(@"(^\d{5}$)|(^\d{9}$)| (^\d{ 5}-\d{ 4}$)", ErrorMessage = "Invalid Zipcode")]
         public string Zip { get; set; }
 
-        //[Required(ErrorMessage = "Phone is Required")]
-        //[RegularExpression(@"^((\+1|1)?\(?(800|[0-9]{3})(\)?\s?|\s?))?\-?[0-9]{3}(\s|\-)?[0-9]{4}$",
-        //    ErrorMessage = "Invalid Phone Number")]
+        [Required(ErrorMessage = "Phone is Required")]
+        [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
     }
 }

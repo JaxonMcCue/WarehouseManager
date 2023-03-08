@@ -3,19 +3,10 @@
     ViewData["Title"] = "Register";
 }
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="jquery.maskedinput.js" type="text/javascript"></script>
-<script src="~/lib/cleave/dist/cleave.min.js"></script>
-<script src="~/js/.js"></script>
-<h2>Register</h2>
+<script src="https://unpkg.com/imask"></script>
+<script src="~/js/account.js"></script>
 
-<script>
-    var cleave = new Cleave('.input-phone', {
-        numeral: true,
-        delimiters: "-",
-        blocks: [3, 3, 4]
-    });
-</script>
+<h2>Register</h2>
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form method="post" asp-action="Register">
@@ -38,7 +29,7 @@
         </div>
     </div>
     <div class="row mb-2">
-        <label class="col-form-label col-md-2">First Name:</label>
+        <label class="col-form-label col-md-2">Business Name:</label>
         <div class="col-md-4">
             <input asp-for="BusinessName" class="form-control" />
         </div>
@@ -157,7 +148,7 @@
     <div class="row mb-2">
         <label class="col-form-label col-md-2">Phone:</label>
         <div class="col-md-4">
-            <input class="input-phone" asp-for="Phone" />
+            <input class="form-control input-phone" asp-for="Phone" />
         </div>
         <div class="col">
             <span asp-validation-for="Phone" class="text-danger"></span>
@@ -194,3 +185,9 @@
 
 
 </form>
+
+@section Scripts{
+     <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/cleave/dist/cleave.min.js"></script>
+    <script src="~/js/account.js"></script>
+}

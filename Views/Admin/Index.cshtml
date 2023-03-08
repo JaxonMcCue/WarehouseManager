@@ -1,0 +1,42 @@
+﻿@model WarehouseManager.Models.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = " | Manage Users";
+}
+<table>
+    <tbody>
+        @if (Model.Users.Count() == 0)
+        {
+
+            <tr colspan="5"><td>There are no user accounts.</td></tr>
+        }
+        else
+        {
+
+
+            @foreach (User user in Model.Users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>
+                        @foreach (string roleName in user.RoleNames)
+                        {
+                            <div>@roleName</div>
+                        }
+                    </td>
+                    <td>
+                        <form method="post" asp-action="AddToRole" asp-route-id="@user.Id">
+                        <select asp-for="RoleName">
+                            <option disabled Value=" "></option>
+                            <option Value="Admin">Admin</option>
+                            <option Value="Sales">Sales</option>
+                        </select>
+                        <input type ="submit" class="btn btn-primary" value="Add role" />
+                        </form>
+                
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

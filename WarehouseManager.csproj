@@ -6,12 +6,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Data\Migrations\20230301203253_orderAndOrderItem.cs" />
+    <Compile Remove="Data\Migrations\20230301203253_orderAndOrderItem.Designer.cs" />
+    <Compile Remove="Data\Migrations\20230301204602_addTestData.cs" />
+    <Compile Remove="Data\Migrations\20230301204602_addTestData.Designer.cs" />
+    <Compile Remove="Data\Migrations\20230308195510_adminControls.cs" />
+    <Compile Remove="Data\Migrations\20230308195510_adminControls.Designer.cs" />
+    <Compile Remove="Migrations\20230308201957_initial.cs" />
+    <Compile Remove="Migrations\20230308201957_initial.Designer.cs" />
+    <Compile Remove="Migrations\20230308203742_Initial.cs" />
+    <Compile Remove="Migrations\20230308203742_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.32" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.32" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.32" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>

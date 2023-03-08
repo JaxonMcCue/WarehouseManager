@@ -10,7 +10,6 @@ namespace WarehouseManager.Models
     public class Customer
     {
         public int CustomerID { get; set; }
-        [Required(ErrorMessage = "First Name is Required")]
         [DisplayName("Business Name")]
         public string BusinessName { get; set; }
         [DisplayName("First Name")]

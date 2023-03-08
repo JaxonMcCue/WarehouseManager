@@ -9,14 +9,18 @@ namespace WarehouseManager.Models
 {
     public class User : IdentityUser
     {
-        public int CustomerID { get; set; }
+        public int? CustomerID { get; set; }
 
-        public Customer customer { get; set; }
+        public Customer Customer { get; set; }
 
         [NotMapped]
         public IList<String> RoleNames { get; set; }
 
         public User() { }
 
+        public User(string email)
+        {
+            Email = email;
+        }
     }
 }

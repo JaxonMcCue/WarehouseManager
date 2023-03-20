@@ -1,5 +1,7 @@
-﻿var cleave = new Cleave(".form-control input-phone", {
-    numerical: true,
-    delimiter: "-",
-    blocks: [3, 3, 4]
-})
+﻿$(document).ready(function () {
+        var cleave = new Cleave('#phone', {
+            delimiters: ["(", ") ", "-"],
+            blocks: [0, 3, 3, 4],
+            numericOnly: true
+        });
+    })

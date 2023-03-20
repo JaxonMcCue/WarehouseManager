@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,20 @@ namespace WarehouseManager.Controllers
             userManager = usrMgr;
             signInManager = signInMgr;
             _context = context;
+        }
+        [HttpGet]
+        public async Task<IActionResult> MyAccount()
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (user.CustomerID != null)
+            {
+                var customer =  _context.Customers.FirstOrDefault(c => c.CustomerID == user.CustomerID);
+            }
+            return View(user);
         }
 
         public IActionResult Register()
@@ -111,37 +127,72 @@ namespace WarehouseManager.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            var model = new ChangePasswordViewModel
-            {
-                Username = User.Identity?.Name ?? ""
-            };
-            return View(model);
-        }
-        [HttpGet]
-        public IActionResult ChangeEmail()
-        {
-            var model = new ChangeEmailViewModel
-            {
-                Username = User.Identity?.Name ?? ""
-            };
-            return View(model);
-        }
+        //[HttpGet]
+        //public IActionResult ChangePassword()
+        //{
+        //    var model = new ChangePasswordViewModel
+        //    {
+        //        Username = User.Identity?.Name ?? ""
+        //    };
+        //    return View(model);
+        //}
+        //[HttpGet]
+        
+        //public IActionResult ChangeEmail()
+        //{
+        //    var model = new ChangeEmailViewModel
+        //    {
+        //        Username = User.Identity?.Name ?? ""
+        //    };
+        //    return View(model);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = await userManager.FindByNameAsync(model.Username);
+                var username = User.Identity.Name;
+                User user = await userManager.FindByNameAsync(username);
                 var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
 
                 if (result.Succeeded)
                 {
                     TempData["message"] = "Password Changed Successfully";
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Manage");
+                }
+                else
+                {
+                    TempData["message"] = "Error";
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            return RedirectToAction("Manage");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ChangeEmail(ChangeEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var username = User.Identity.Name;
+                User user = await userManager.FindByNameAsync(username);
+                var passwordCorrect = await userManager.CheckPasswordAsync(user, model.ConfirmPassword);
+                if (!passwordCorrect)
+                {
+                    TempData["error"] = "The password is incorrect.";
+                    return RedirectToAction("Manage");
+                }
+                var email = await userManager.GenerateChangeEmailTokenAsync(user, model.NewEmail);
+                var result = await userManager.ChangeEmailAsync(user, model.NewEmail, email);
+
+                if (result.Succeeded)
+                {
+                    TempData["message"] = "Email Changed Successfully";
+                    return RedirectToAction("Manage");
                 }
                 else
                 {
@@ -151,30 +202,87 @@ namespace WarehouseManager.Controllers
                     }
                 }
             }
-            return View(model);
+                // create a new EditUserViewModel object and pass it to the view
+                var editUser = new UserEditViewModel();
+            return View("Manage", editUser);
         }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Manage()
+        {
+            var username = User.Identity.Name;
+            var user = await userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerID == user.CustomerID);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            var emailVM = new ChangeEmailViewModel();
+            var passwordVM = new ChangePasswordViewModel();
+
+            var editUser = new UserEditViewModel
+            {
+                PasswordViewModel = passwordVM,
+                EmailViewModel = emailVM,
+                User = user,
+                Customer = customer
+            };
+
+            return View(editUser);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> ChangeEmail(ChangeEmailViewModel model)
+        public async Task<IActionResult> Manage(UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = await userManager.FindByEmailAsync(model.Username);
-                var email = await userManager.GenerateChangeEmailTokenAsync(user, model.NewEmail);
-                var result = await userManager.ChangeEmailAsync(user, model.NewEmail, email);
+                var user = await userManager.FindByNameAsync(model.User.UserName);
+                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerID == user.CustomerID);
 
-                if (result.Succeeded)
+                if (user == null || customer == null)
                 {
-                    TempData["message"] = "Email Changed Successfully";
-                    return RedirectToAction("Index", "Home");
+                    return NotFound();
                 }
-                else
+
+                // Update the user data
+                var result = await userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
                 {
-                    foreach(IdentityError error in result.Errors)
+                    foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
+                    return View(model);
                 }
+
+                // Update the customer data
+                customer.BusinessName = model.Customer.BusinessName;
+                customer.FirstName = model.Customer.FirstName;
+                customer.LastName = model.Customer.LastName;
+                customer.Address = model.Customer.Address;
+                customer.City = model.Customer.City;
+                customer.State = model.Customer.State;
+                customer.Zip = model.Customer.Zip;
+                customer.Phone = model.Customer.Phone;
+
+                _context.Customers.Update(customer);
+                await _context.SaveChangesAsync();
+
+                TempData["userMessage"] = "User information Successfully Updated";
+                return RedirectToAction("Manage");
             }
+
             return View(model);
         }
     }

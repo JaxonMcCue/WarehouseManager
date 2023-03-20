@@ -3,40 +3,77 @@
 @{
     ViewData["Title"] = " | Manage Users";
 }
-<table>
+@section Styles {
+    <link href="~/css/admin.css" rel="stylesheet" />
+}
+<h4>Admin Dashboard</h4>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Add Role</th>
+            <th>Remove Role</th>
+        </tr>
+    </thead>
     <tbody>
         @if (Model.Users.Count() == 0)
         {
-
             <tr colspan="5"><td>There are no user accounts.</td></tr>
         }
         else
         {
-
-
             @foreach (User user in Model.Users)
             {
                 <tr>
                     <td>@user.UserName</td>
+                    <td>@user.Email</td>
                     <td>
-                        @foreach (string roleName in user.RoleNames)
-                        {
-                            <div>@roleName</div>
-                        }
+                        @string.Join(", ", user.RoleNames)
                     </td>
                     <td>
-                        <form method="post" asp-action="AddToRole" asp-route-id="@user.Id">
-                        <select asp-for="RoleName">
-                            <option disabled Value=" "></option>
-                            <option Value="Admin">Admin</option>
-                            <option Value="Sales">Sales</option>
-                        </select>
-                        <input type ="submit" class="btn btn-primary" value="Add role" />
+                        <form method="post" asp-action="AddToRole" asp-route-id="@user.Id" id="roleForm">
+                            <select asp-for="RoleName">
+                                <option disabled selected value="">Select role</option>
+                                <option Value="Admin">Admin</option>
+                                <option Value="Sales">Sales</option>
+                            </select>
+                            <button type="submit" form="roleForm" class="btn btn-primary">Add role</button>
                         </form>
-                
+                    </td>
+                    <td>
+                       
+                        <form method="post" asp-action="RemoveRole" asp-route-id="@user.Id" id="deleteForm">
+                            @if (user == Model.Users.FirstOrDefault())
+                            {
+                                <select asp-for="RoleName" disabled>
+                                    <option disabled selected value="">Select role</option>
+                                    <option Value="Admin">Admin</option>
+                                    <option Value="Sales">Sales</option>
+                                </select>
+                                <button type="submit" form="deleteForm" class="btn btn-primary" disabled>Remove role</button>
+                            }
+                            else
+                            {
+                                <select asp-for="RoleName">
+                                    <option disabled selected value="">Select role</option>
+                                    <option Value="Admin">Admin</option>
+                                    <option Value="Sales">Sales</option>
+                                </select>
+                                <button type="submit" form="deleteForm" class="btn btn-primary">Remove role</button>
+                            }
+
+                        </form>
                     </td>
                 </tr>
             }
         }
     </tbody>
 </table>
+

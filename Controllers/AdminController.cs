@@ -28,21 +28,48 @@ namespace WarehouseManager.Controllers
                 user.RoleNames = await userManager.GetRolesAsync(user);
                 users.Add(user);
             }
+
+            // Sort the list by checking if the user's name is "Admin"
+            users = users.OrderBy(u => u.UserName != "admin").ToList();
+
             UserViewModel model = new UserViewModel
             {
                 Users = users,
                 Roles = roleManager.Roles
             };
+
             return View(model);
         }
-       
+
         public async Task<IActionResult> AddToRole(UserViewModel model, string id)
         {
             Role role = await roleManager.FindByNameAsync(model.RoleName);
             User user = await userManager.FindByIdAsync(id);
+
+            if (role == null || user == null)
+            {
+                TempData["ErrorMessage"] = "Role or user not found.";
+                return RedirectToAction("Index");
+            }
+
             await userManager.AddToRoleAsync(user, role.Name);
             return RedirectToAction("Index");
         }
-        
+
+        public async Task<IActionResult> RemoveRole(UserViewModel model, string id)
+        {
+            Role role = await roleManager.FindByNameAsync(model.RoleName);
+            User user = await userManager.FindByIdAsync(id);
+
+            if (role == null || user == null)
+            {
+                TempData["ErrorMessage"] = "Role or user not found.";
+                return RedirectToAction("Index");
+            }
+
+            await userManager.RemoveFromRoleAsync(user, role.Name);
+            return RedirectToAction("Index");
+        }
+
     }
 }

@@ -1,0 +1,116 @@
+﻿@model WarehouseManager.Models.ViewModels.UserEditViewModel
+
+@section Styles {
+    <link href="~/css/manage.css" rel="stylesheet" />
+}
+
+
+<h4>Manage My Account</h4>
+<hr />
+<div>Username: @User.Identity.Name | Email: @Model.User.Email </div>
+<hr />
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["error"]
+    </div>
+}
+<div class="border-bottom">
+    <div class="row">
+        <div class="col">
+            <h5>Change Email</h5>
+            <form asp-action="ChangeEmail" method="post">
+                <div class="form-group">
+                    <label asp-for="EmailViewModel.NewEmail">New Email:</label>
+                    <input type="email" class="form-control" asp-for="EmailViewModel.NewEmail" name="NewEmail" placeholder="New Email" required>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EmailViewModel.ConfirmEmail">Confirm New Email:</label>
+                    <input type="email" class="form-control" asp-for="EmailViewModel.ConfirmEmail" name="ConfirmEmail" placeholder="Confirm New Email" required>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EmailViewModel.ConfirmPassword">Enter Password:</label>
+                    <input type="password" class="form-control" asp-for="EmailViewModel.ConfirmPassword" name="ConfirmEmail" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Change Email</button>
+            </form>
+        </div>
+        <div class="col">
+            <h5>Change Password</h5>
+            <form asp-action="ChangePassword" method="post">
+                <div class="form-group">
+                    <label asp-for="PasswordViewModel.OldPassword">Current Password:</label>
+                    <input type="password" class="form-control" asp-for="PasswordViewModel.OldPassword" name="OldPassword" placeholder="Current Password" required>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PasswordViewModel.NewPassword">New Password:</label>
+                    <input type="password" class="form-control" asp-for="PasswordViewModel.NewPassword" name="NewPassword" placeholder="New Password" required>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PasswordViewModel.ConfirmPassword">Confirm New Password:</label>
+                    <input type="password" class="form-control" asp-for="PasswordViewModel.ConfirmPassword" name="ConfirmPassword" placeholder="Confirm New Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </form>
+        </div>
+    </div>
+    <br />
+</div>
+<br />
+@if (TempData["userMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["userMessage"]</div>
+}
+<form asp-action="Manage" method="post">
+    <input type="hidden" asp-for="User.UserName" />
+
+    <h5>Customer Information</h5>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.BusinessName)"></label>
+                <input asp-for="@(Model.Customer.BusinessName)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.FirstName)"></label>
+                <input asp-for="@(Model.Customer.FirstName)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.LastName)"></label>
+                <input asp-for="@(Model.Customer.LastName)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.Phone)" ></label>
+                <input asp-for="@(Model.Customer.Phone)" id="phone" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.Address)"></label>
+                <input asp-for="@(Model.Customer.Address)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.City)"></label>
+                <input asp-for="@(Model.Customer.City)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.State)"></label>
+                <input asp-for="@(Model.Customer.State)" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@(Model.Customer.Zip)"></label>
+                <input asp-for="@(Model.Customer.Zip)" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+@section Scripts {
+    <script src="~/js/cleave.min.js"></script>
+    <script src="~/js/account.js"></script>
+}

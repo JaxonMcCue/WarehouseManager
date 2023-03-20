@@ -3,8 +3,6 @@
     ViewData["Title"] = "Register";
 }
 
-<script src="https://unpkg.com/imask"></script>
-<script src="~/js/account.js"></script>
 
 <h2>Register</h2>
 
@@ -148,7 +146,7 @@
     <div class="row mb-2">
         <label class="col-form-label col-md-2">Phone:</label>
         <div class="col-md-4">
-            <input class="form-control input-phone" asp-for="Phone" />
+            <input id="phone" class="form-control input-phone" asp-for="Phone" />
         </div>
         <div class="col">
             <span asp-validation-for="Phone" class="text-danger"></span>
@@ -185,9 +183,8 @@
 
 
 </form>
-
-@section Scripts{
-     <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/cleave/dist/cleave.min.js"></script>
-    <script src="~/js/account.js"></script>
+@section scripts {
+<script src="~/js/cleave.min.js"></script>
+<script src="~/js/account.js"></script>
 }
+

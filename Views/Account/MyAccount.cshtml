@@ -1,0 +1,79 @@
+﻿@model WarehouseManager.Models.User
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>My Account</h4>
+            <hr>
+            <dl class="row">
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.UserName)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.UserName
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Email
+                </dd>
+                <dt class="col-md-3">
+                    Business Name
+                </dt>
+                <dd class="col-md-9">
+                    @(Model.Customer.BusinessName != null ? Model.Customer.BusinessName : "None")
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.FirstName)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.FirstName
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.LastName)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.LastName
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.Address)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.Address
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.City)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.City
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.State)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.State
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.Zip)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.Zip
+                </dd>
+                <dt class="col-md-3">
+                    @Html.DisplayNameFor(model => model.Customer.Phone)
+                </dt>
+                <dd class="col-md-9">
+                    @Model.Customer.Phone
+                </dd>
+            </dl>
+            <a asp-action="Manage">Update Information</a>
+        </div>
+       
+    </div>
+</div>
+
+
+
+
+</div>

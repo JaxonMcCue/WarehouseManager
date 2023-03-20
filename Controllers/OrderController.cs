@@ -11,6 +11,8 @@ namespace WarehouseManager.Controllers
 {
     public class OrderController : Controller
     {
+
+        int orderID = 0;
         private readonly ApplicationDbContext _context;
 
         public OrderController(ApplicationDbContext context)
@@ -24,69 +26,97 @@ namespace WarehouseManager.Controllers
             return View();
         }
 
-        //[HttpGet]
-        //public IActionResult AddOrder()
-        //{
-        //    var allItems = _context.Items.ToList();
-        //    List<ItemViewModel> itemViewList = new List<ItemViewModel>();
-
-        //    foreach (Item item in allItems)
-        //    {
-        //        ItemViewModel itemView = new ItemViewModel();
-        //        itemView.ItemID = item.ItemID;
-        //        itemView.ItemName = item.ItemName;
-        //        itemView.ItemDescription = item.ItemDescription;
-        //        itemView.Price = item.Price;
-        //        itemView.ItemAmount = item.ItemAmount;
-        //        itemView.ItemSelected = false;
-        //        itemViewList.Add(itemView);
-        //    }
-
-        //    ViewBag.allItems = itemViewList;
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> AddOrder(Order newOrder)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        newOrder.Completed = false;
-        //        newOrder.Cancelled = false;
-
-        //        List<ItemViewModel> selectedItems = new List<ItemViewModel>();
-
-        //        foreach (ItemViewModel item in ViewBag.allItems)
-        //        {
-        //            if (item.ItemSelected == true) {
-        //                OrderItem orderItem = new OrderItem();
-        //                orderItem.OrderID = newOrder.OrderID;
-        //                orderItem.ItemID = item.ItemID;
-        //                _context.Add(orderItem);
-
-        //                newOrder.OrderCost += Convert.ToDecimal(item.Price);
-        //                newOrder.ItemCount += 1;
-
-        //                selectedItems.Add(item);
-        //            }
-        //        }
-
-        //        if(selectedItems.Count > 0)
-        //        {
-        //            _context.Add(newOrder);
-        //            await _context.SaveChangesAsync();
-        //        }
-
-        //        return RedirectToAction(nameof(ViewCustOrders));
-        //    }
-
-        //    return View(newOrder);
-        //}
-
-        public IActionResult ViewCustOrders()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddOrder(Order newOrder)
         {
+            if (ModelState.IsValid)
+            {
+                newOrder.OrderCost = 0;
+                newOrder.ItemCount = 0;
+                newOrder.Completed = false;
+                newOrder.Cancelled = false;
+                _context.Add(newOrder);
+                await _context.SaveChangesAsync();
+
+                ViewBag.AllItems = _context.Items.ToList();
+                return RedirectToAction(nameof(ViewItems));
+            }
+
+            return View(newOrder);
+        }
+
+        [HttpGet]
+        public IActionResult ViewItems()
+        {
+            var allItems = _context.Items.ToList();
+
+            Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+            var orderItems = _context.OrderItems.ToList();
+            var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
+            selectedItems.Clear();
+
+            foreach (OrderItem selectedItem in orderItems)
+            {
+                if (selectedItem.OrderID == order.OrderID)
+                {
+                    selectedItems.Add(selectedItem);
+                }
+            }
+            ViewBag.items = selectedItems;
+
+            return View(allItems);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddItemToOrder(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            OrderItem orderItem = new OrderItem();
+
+            orderItem.ItemID = item.ItemID;
+
+            Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+            orderItem.OrderID = order.OrderID;
+            orderID = order.OrderID;
+            order.OrderCost += Convert.ToDecimal(item.Price);
+            order.ItemCount += 1;
+            _context.Update(order);
+
+            _context.Add(orderItem);
+            await _context.SaveChangesAsync();
+
+            
+            return RedirectToAction(nameof(ViewItems));
+        }
+
+        public async Task<IActionResult> ViewCustOrders()
+        {
+            orderID = 0;
+            //Remove empty orders
             var allOrders = _context.Orders.ToList();
+            foreach (Order order in allOrders)
+            {
+                if(order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
+                {
+                    _context.Remove(order);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            allOrders = _context.Orders.ToList();
             var custOrders = _context.Orders.ToList();
             custOrders.Clear();
 
@@ -105,11 +135,11 @@ namespace WarehouseManager.Controllers
                         if (item.OrderID == order.OrderID)
                         {
                             orderItems.Add(item);
-                            order.OrderCost += Convert.ToDecimal(item.Item.Price);
+                            //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                         }
                     }
 
-                    order.ItemCount = orderItems.Count();
+                    //order.ItemCount = orderItems.Count();
                     custOrders.Add(order);
                 }
             }
@@ -139,12 +169,12 @@ namespace WarehouseManager.Controllers
                 if(item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
-                    order.OrderCost += Convert.ToDecimal(item.Item.Price);
+                    //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                 }
             }
             
             ViewBag.items = orderItems;
-            order.ItemCount = orderItems.Count();
+            //order.ItemCount = orderItems.Count();
             return View(order);
         }
 
@@ -171,12 +201,12 @@ namespace WarehouseManager.Controllers
                 if (item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
-                    order.OrderCost += Convert.ToDecimal(item.Item.Price);
+                    //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                 }
             }
 
             ViewBag.items = orderItems;
-            order.ItemCount = orderItems.Count();
+            //order.ItemCount = orderItems.Count();
             return View(order);
         }
 

@@ -1,0 +1,89 @@
+﻿@model IEnumerable<WarehouseManager.Models.Item>
+
+@{
+    ViewData["Title"] = "AddItems";
+}
+
+<h1>Add Items</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemAmount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemAmount)
+                </td>
+                <td>
+                    <a asp-action="AddItemToOrder" asp-route-id="@item.ItemID">Add Item</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Your Order</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Item Description
+            </th>
+            <th>
+                Price
+            </th>
+        </tr>
+    </thead>
+    @if (ViewBag.items != null)
+    {
+        <tbody>
+            @foreach (OrderItem item in ViewBag.items)
+            {
+                <tr>
+                    <td>
+                        @item.Item.ItemName
+                    </td>
+                    <td>
+                        @item.Item.ItemDescription
+                    </td>
+                    <td>
+                        @item.Item.Price
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+
+</table>
+
+<a asp-action="ViewCustOrders">Add Orders</a>

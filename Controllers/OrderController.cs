@@ -11,8 +11,6 @@ namespace WarehouseManager.Controllers
 {
     public class OrderController : Controller
     {
-
-        int orderID = 0;
         private readonly ApplicationDbContext _context;
 
         public OrderController(ApplicationDbContext context)
@@ -89,8 +87,8 @@ namespace WarehouseManager.Controllers
 
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
+            //Update order cost and item count
             orderItem.OrderID = order.OrderID;
-            orderID = order.OrderID;
             order.OrderCost += Convert.ToDecimal(item.Price);
             order.ItemCount += 1;
             _context.Update(order);
@@ -104,7 +102,6 @@ namespace WarehouseManager.Controllers
 
         public async Task<IActionResult> ViewCustOrders()
         {
-            orderID = 0;
             //Remove empty orders
             var allOrders = _context.Orders.ToList();
             foreach (Order order in allOrders)
@@ -218,6 +215,103 @@ namespace WarehouseManager.Controllers
             order.Cancelled = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ViewCustOrders));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveOrder(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = _context.Orders.FirstOrDefault(m => m.OrderID == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ViewCustOrders));
+        }
+
+        public IActionResult Search(string searchString)
+        {
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                var items = _context.Items.Where(i => i.ItemName!.Contains(searchString));
+
+                Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+                var orderItems = _context.OrderItems.ToList();
+                var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
+                selectedItems.Clear();
+
+                foreach (OrderItem selectedItem in orderItems)
+                {
+                    if (selectedItem.OrderID == order.OrderID)
+                    {
+                        selectedItems.Add(selectedItem);
+                    }
+                }
+                ViewBag.items = selectedItems;
+
+                return View("ViewItems", items);
+            }
+            return RedirectToAction(nameof(AddItemToOrder));
+        }
+
+        public async Task<IActionResult> CancelNewOrder()
+        {
+            Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+            order.Cancelled = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(ViewCustOrders));
+        }
+
+        public async Task<IActionResult> RemoveItemFromOrder(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var orderItem = _context.OrderItems.Include(c => c.Item).FirstOrDefault(m => m.ID == id);
+            if (orderItem == null)
+            {
+                return NotFound();
+            }
+
+            // Remove order item
+            _context.Remove(orderItem);
+            await _context.SaveChangesAsync();
+
+            Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+            // Update order cost and item count
+            order.OrderCost -= Convert.ToDecimal(orderItem.Item.Price);
+            order.ItemCount -= 1;
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            // Get order items for order
+            var orderItems = _context.OrderItems.ToList();
+            var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
+            selectedItems.Clear();
+
+            foreach (OrderItem selectedItem in orderItems)
+            {
+                if (selectedItem.OrderID == order.OrderID)
+                {
+                    selectedItems.Add(selectedItem);
+                }
+            }
+            ViewBag.items = selectedItems;
+
+            return RedirectToAction(nameof(ViewItems));
         }
     }
 }

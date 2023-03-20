@@ -6,6 +6,13 @@
 
 <h1>Add Items</h1>
 
+<form asp-controller="OrderController" method="get">
+    <p>
+        Search: <input type="text" name="SearchString" />
+        <input type="submit" asp-action="Search" value="Search" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -62,28 +69,30 @@
             <th>
                 Price
             </th>
+            <th></th>
         </tr>
     </thead>
-    @if (ViewBag.items != null)
-    {
-        <tbody>
-            @foreach (OrderItem item in ViewBag.items)
-            {
-                <tr>
-                    <td>
-                        @item.Item.ItemName
-                    </td>
-                    <td>
-                        @item.Item.ItemDescription
-                    </td>
-                    <td>
-                        @item.Item.Price
-                    </td>
-                </tr>
-            }
-        </tbody>
-    }
+    <tbody>
+        @foreach (OrderItem item in ViewBag.items)
+        {
+            <tr>
+                <td>
+                    @item.Item.ItemName
+                </td>
+                <td>
+                    @item.Item.ItemDescription
+                </td>
+                <td>
+                    @item.Item.Price
+                </td>
+                <td>
+                    <a class="btn btn-danger" asp-action="RemoveItemFromOrder" asp-route-id="@item.ID">Remove</a>
+                </td>
+            </tr>
+        }
+     </tbody>
 
 </table>
 
-<a asp-action="ViewCustOrders">Add Orders</a>
+<a asp-action="ViewCustOrders">Add Orders</a> |
+<a class="text-danger" asp-action="CancelNewOrder">Cancel Order</a>

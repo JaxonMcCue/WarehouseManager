@@ -30,7 +30,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                $@Html.DisplayFor(modelItem => item.OrderCost)
+                @Html.DisplayFor(modelItem => item.OrderCost)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ItemCount)
@@ -51,7 +51,8 @@
             @if (item.Cancelled == true)
             {
                 <td>
-                    <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a>
+                    <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a> |
+                    <a class="text-danger" asp-action="RemoveOrder" asp-route-id="@item.OrderID">Remove</a>
                 </td>
             }
         </tr>

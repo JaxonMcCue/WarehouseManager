@@ -193,6 +193,39 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(EditAmt));
         }
 
+        public async Task<IActionResult> ReportItem(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            var damage = new DamagedItem();
+
+            damage.Count = 0;
+            damage.ItemID = item.ItemID;
+
+            return View(damage);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportItem(DamagedItem damagedItem)
+        {
+            damagedItem.Date = DateTime.Now;
+            if (ModelState.IsValid)
+            {
+                _context.Damaged.Add(damagedItem);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(EditAmt));
+            }
+            return View(damagedItem);
+        }
     }
 }

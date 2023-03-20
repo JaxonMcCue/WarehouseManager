@@ -51,7 +51,9 @@
                         <span asp-validation-for="@newItem.ItemAmount"></span>
                         <input type="submit" value="Save" class="btn btn-primary" />
                     </form>
-
+                </td>
+                <td>
+                    <a asp-action="ReportItem" asp-route-id="@item.ItemID">Report damaged item</a>
                 </td>
             </tr>
         }

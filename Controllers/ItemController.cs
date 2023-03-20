@@ -221,7 +221,11 @@ namespace WarehouseManager.Controllers
             damagedItem.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
+                var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == damagedItem.ItemID);
+                item.ItemAmount -= damagedItem.Count;
+
                 _context.Damaged.Add(damagedItem);
+                _context.Items.Update(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(EditAmt));
             }

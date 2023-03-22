@@ -38,18 +38,18 @@
                         @string.Join(", ", user.RoleNames)
                     </td>
                     <td>
-                        <form method="post" asp-action="AddToRole" asp-route-id="@user.Id" id="roleForm">
+                        <form method="post" asp-action="AddToRole" asp-route-id="@user.Id">
                             <select asp-for="RoleName">
                                 <option disabled selected value="">Select role</option>
                                 <option Value="Admin">Admin</option>
                                 <option Value="Sales">Sales</option>
                             </select>
-                            <button type="submit" form="roleForm" class="btn btn-primary">Add role</button>
+                            <button type="submit" class="btn btn-primary">Add role</button>
                         </form>
                     </td>
                     <td>
                        
-                        <form method="post" asp-action="RemoveRole" asp-route-id="@user.Id" id="deleteForm">
+                        <form method="post" asp-action="RemoveRole" asp-route-id="@user.Id">
                             @if (user == Model.Users.FirstOrDefault())
                             {
                                 <select asp-for="RoleName" disabled>
@@ -57,7 +57,7 @@
                                     <option Value="Admin">Admin</option>
                                     <option Value="Sales">Sales</option>
                                 </select>
-                                <button type="submit" form="deleteForm" class="btn btn-primary" disabled>Remove role</button>
+                                <button type="submit" class="btn btn-primary" disabled>Remove role</button>
                             }
                             else
                             {
@@ -66,7 +66,7 @@
                                     <option Value="Admin">Admin</option>
                                     <option Value="Sales">Sales</option>
                                 </select>
-                                <button type="submit" form="deleteForm" class="btn btn-primary">Remove role</button>
+                                <button type="submit" class="btn btn-primary">Remove role</button>
                             }
 
                         </form>

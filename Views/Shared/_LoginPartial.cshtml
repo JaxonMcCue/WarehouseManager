@@ -10,7 +10,7 @@
         @if (User.Identity.Name == "admin")
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="account" asp-action="MyAccount" title="Manage" disabled>Hello @User.Identity.Name!</a>
+                <a class="nav-link text-dark" title="Manage">Hello @User.Identity.Name!</a>
             </li>
         }
         else

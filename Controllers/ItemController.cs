@@ -24,6 +24,12 @@ namespace WarehouseManager.Controllers
             return View(_context.Items.ToList());
         }
 
+        public IActionResult LowItems()
+        {
+            var items = _context.Items.Where(i => i.ItemAmount < 5);
+            return View("DisplayItems", items);
+        }
+
         [HttpGet]
         public IActionResult AddItem()
         {

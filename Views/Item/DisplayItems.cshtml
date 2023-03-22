@@ -5,9 +5,22 @@
 }
 
 <h1>DisplayItems</h1>
+@{
+    string linkText = "Low Items";
+    string linkRef = Url.Action("LowItems", "Item");
+}
 
+@if (ViewContext.RouteData.Values["action"].ToString() == "LowItems")
+{
+    linkText = "Go Back";
+    linkRef = Url.Action("DisplayItems", "Item");
+}
 <p>
-    <a asp-action="AddItem">Create New</a>
+    <a href="AddItem">Create New</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a href="@linkRef" id="link">@linkText</a>
+    }
 </p>
 
 <form asp-controller="ItemController" method="get">
@@ -36,26 +49,31 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemAmount)
-            </td>
-            <td>
-                <a asp-action="EditItem" asp-route-id="@item.ItemID">Edit</a> |
-                <a asp-action="ViewItem" asp-route-id="@item.ItemID">Details</a> |
-                <a asp-action="DeleteItem" asp-route-id="@item.ItemID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemAmount)
+                </td>
+                <td>
+                    <a asp-action="EditItem" asp-route-id="@item.ItemID">Edit</a> |
+                    <a asp-action="ViewItem" asp-route-id="@item.ItemID">Details</a> |
+                    <a asp-action="DeleteItem" asp-route-id="@item.ItemID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts{
+
+}

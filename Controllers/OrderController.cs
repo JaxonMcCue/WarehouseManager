@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,18 +19,104 @@ namespace WarehouseManager.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult AddOrder()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult AddOrder()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> AddOrder(Order newOrder)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        newOrder.OrderCost = 0;
+        //        newOrder.ItemCount = 0;
+        //        newOrder.Completed = false;
+        //        newOrder.Cancelled = false;
+        //        _context.Add(newOrder);
+        //        await _context.SaveChangesAsync();
+
+        //        ViewBag.AllItems = _context.Items.ToList();
+        //        return RedirectToAction(nameof(ViewItems));
+        //    }
+
+        //    return View(newOrder);
+        //}
+
+        //[HttpGet]
+        //public IActionResult ViewItems()
+        //{
+        //    var allItems = _context.Items.ToList();
+
+        //    Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+        //    var orderItems = _context.OrderItems.ToList();
+        //    var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
+        //    selectedItems.Clear();
+
+        //    foreach (OrderItem selectedItem in orderItems)
+        //    {
+        //        if (selectedItem.OrderID == order.OrderID)
+        //        {
+        //            selectedItems.Add(selectedItem);
+        //        }
+        //    }
+        //    ViewBag.items = selectedItems;
+
+        //    return View(allItems);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> AddItemToOrder(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var item = await _context.Items.FindAsync(id);
+        //    if (item == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    OrderItem orderItem = new OrderItem();
+
+        //    orderItem.ItemID = item.ItemID;
+
+        //    Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+        //    //Update order cost and item count
+        //    orderItem.OrderID = order.OrderID;
+        //    order.OrderCost += Convert.ToDecimal(item.Price);
+        //    order.ItemCount += 1;
+        //    _context.Update(order);
+
+        //    _context.Add(orderItem);
+        //    await _context.SaveChangesAsync();
+
+
+        //    return RedirectToAction(nameof(ViewItems));
+        //}
+
         public async Task<IActionResult> AddOrder(Order newOrder)
         {
             if (ModelState.IsValid)
             {
+                User loggedInUser = null;
+                var users = _context.Users.ToList();
+
+                foreach (User user in users)
+                {
+                    if (user.UserName == User.Identity.Name)
+                    {
+                        loggedInUser = user;
+                    }
+                }
+
+                newOrder.CustomerID = (int)loggedInUser.CustomerID;
                 newOrder.OrderCost = 0;
                 newOrder.ItemCount = 0;
                 newOrder.Completed = false;
@@ -96,10 +183,11 @@ namespace WarehouseManager.Controllers
             _context.Add(orderItem);
             await _context.SaveChangesAsync();
 
-            
+
             return RedirectToAction(nameof(ViewItems));
         }
 
+        [Authorize]
         public async Task<IActionResult> ViewCustOrders()
         {
             //Remove empty orders
@@ -113,16 +201,26 @@ namespace WarehouseManager.Controllers
                 }
             }
 
+            User loggedInUser = null;
             allOrders = _context.Orders.ToList();
             var custOrders = _context.Orders.ToList();
             custOrders.Clear();
 
+            //Get logged in user
+            var users = _context.Users.ToList();
+
+            foreach(User user in users)
+            {
+                if(user.UserName == User.Identity.Name)
+                {
+                    loggedInUser = user;
+                }
+            }
+
             foreach(Order order in allOrders)
             {
-                if (order.CustomerID == order.CustomerID) //User.CustomerID
+                if (order.CustomerID == loggedInUser.CustomerID) //User.CustomerID
                 {
-                    
-
                     var allOrderItems = _context.OrderItems.ToList();
                     var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
                     orderItems.Clear();
@@ -132,11 +230,9 @@ namespace WarehouseManager.Controllers
                         if (item.OrderID == order.OrderID)
                         {
                             orderItems.Add(item);
-                            //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                         }
                     }
 
-                    //order.ItemCount = orderItems.Count();
                     custOrders.Add(order);
                 }
             }
@@ -166,12 +262,23 @@ namespace WarehouseManager.Controllers
                 if(item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
-                    //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                 }
             }
-            
+
+            //Get customer
+            var customers = _context.Customers.ToList();
+            Customer orderCustomer = null;
+
+            foreach(Customer customer in customers)
+            {
+                if(customer.CustomerID == order.CustomerID)
+                {
+                    orderCustomer = customer;
+                }
+            }
+
+            ViewBag.customer = orderCustomer;
             ViewBag.items = orderItems;
-            //order.ItemCount = orderItems.Count();
             return View(order);
         }
 
@@ -198,12 +305,10 @@ namespace WarehouseManager.Controllers
                 if (item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
-                    //order.OrderCost += Convert.ToDecimal(item.Item.Price);
                 }
             }
 
             ViewBag.items = orderItems;
-            //order.ItemCount = orderItems.Count();
             return View(order);
         }
 
@@ -312,6 +417,54 @@ namespace WarehouseManager.Controllers
             ViewBag.items = selectedItems;
 
             return RedirectToAction(nameof(ViewItems));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DisplayOrders()
+        {
+            //Remove empty orders
+            var allOrders = _context.Orders.ToList();
+            foreach (Order order in allOrders)
+            {
+                if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
+                {
+                    _context.Remove(order);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            allOrders = _context.Orders.ToList();
+
+            return View(allOrders);
+        }
+
+        [Authorize(Roles = "Sales")]
+        public async Task<IActionResult> DisplayIncompleteOrders()
+        {
+            //Remove empty orders
+            var allOrders = _context.Orders.ToList();
+            foreach (Order order in allOrders)
+            {
+                if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
+                {
+                    _context.Remove(order);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            allOrders = _context.Orders.ToList();
+            var incompleteOrders = _context.Orders.ToList();
+            incompleteOrders.Clear();
+
+            foreach(Order order in allOrders)
+            {
+                if(order.Completed == false)
+                {
+                    incompleteOrders.Add(order);
+                }
+            }
+
+            return View(incompleteOrders);
         }
     }
 }

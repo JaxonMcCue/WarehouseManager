@@ -54,7 +54,7 @@
         }
     </tbody>
 </table>
-
+<br /><br />
 <h3>Your Order</h3>
 
 <table class="table">
@@ -70,7 +70,7 @@
                 Price
             </th>
             <th></th>
-        </tr>
+        </tr>     
     </thead>
     <tbody>
         @foreach (OrderItem item in ViewBag.items)
@@ -90,9 +90,10 @@
                 </td>
             </tr>
         }
-     </tbody>
+    </tbody>
 
 </table>
 
+<br />
 <a asp-action="ViewCustOrders">Add Orders</a> |
 <a class="text-danger" asp-action="CancelNewOrder">Cancel Order</a>

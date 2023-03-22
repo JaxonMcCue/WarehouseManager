@@ -4,15 +4,15 @@
     ViewData["Title"] = "ReportItem";
 }
 
-<h1>ReportItem</h1>
+<h1>Report Item</h1>
 
-<h4>DamagedItem</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="ReportItem">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ItemID" />
+            <h4>@ViewBag.ItemName</h4>
             @*<div class="form-group">
             <label asp-for="DamagedID" class="control-label"></label>
             <input asp-for="DamagedID" class="form-control" />
@@ -41,7 +41,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="EditAmt">Back to List</a>
 </div>
 
 @section Scripts {

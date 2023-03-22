@@ -211,6 +211,8 @@ namespace WarehouseManager.Controllers
             damage.Count = 0;
             damage.ItemID = item.ItemID;
 
+            ViewBag.ItemName = item.ItemName;
+
             return View(damage);
         }
 

@@ -10,10 +10,10 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderID)
+            Customer
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OrderID)
+            @ViewBag.customer.FirstName @ViewBag.customer.LastName
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.OrderCost)

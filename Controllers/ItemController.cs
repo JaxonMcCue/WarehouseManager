@@ -217,6 +217,8 @@ namespace WarehouseManager.Controllers
             damage.Count = 0;
             damage.ItemID = item.ItemID;
 
+            ViewBag.ItemName = item.ItemName;
+
             return View(damage);
         }
 
@@ -236,6 +238,40 @@ namespace WarehouseManager.Controllers
                 return RedirectToAction(nameof(EditAmt));
             }
             return View(damagedItem);
+        }
+
+        public IActionResult Reports()
+        {
+            var report = _context.Damaged.Include(n => n.DamagedItems).OrderByDescending(d => d.Date);
+            return View(report);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveReport(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var report = await _context.Damaged.FirstOrDefaultAsync(i => i.DamagedID == id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            return View(report);
+        }
+
+        [HttpPost, ActionName("RemoveReport")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveReportConfirmed(int id)
+        {
+            var report = await _context.Damaged.FindAsync(id);
+            _context.Damaged.Remove(report);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Reports));
         }
     }
 }

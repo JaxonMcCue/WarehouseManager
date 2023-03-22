@@ -1,0 +1,50 @@
+﻿@model IEnumerable<WarehouseManager.Models.ViewModels.CustomerViewModel>;
+@section Styles {
+    <link href="~/css/admin.css" rel="stylesheet" />
+}
+<h4>Customer Contact</h4>
+
+<form asp-controller="CustomerController" method="get">
+    <p>
+        Search: <input type="text" name="SearchString" />
+        <input type="submit" asp-action="Search" value="Search" />
+    </p>
+</form>
+@if (Model.Count() == 0)
+{
+    <p>No customers Found.</p>
+}
+else
+{
+    <table class="table-bordered">
+        <thead>
+            <tr>
+                <th>Business Name</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Phone</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.BusinessName</td>
+                    <td>@customer.FirstName @customer.LastName</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.City</td>
+                    <td>@customer.State</td>
+                    <td>@customer.Zip</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+

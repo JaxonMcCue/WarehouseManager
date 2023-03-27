@@ -108,6 +108,15 @@ namespace WarehouseManager.Controllers
         [Authorize]
         public async Task<IActionResult> ViewCustOrders()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction(nameof(DisplayOrders));
+            }
+            if (User.IsInRole("Sales"))
+            {
+                return RedirectToAction(nameof(DisplayIncompleteOrders));
+            }
+
             //Remove empty orders
             var allOrders = _context.Orders.ToList();
             foreach (Order order in allOrders)
@@ -359,7 +368,7 @@ namespace WarehouseManager.Controllers
         public async Task<IActionResult> DisplayOrders()
         {
             //Remove empty orders
-            var allOrders = _context.Orders.ToList();
+            var allOrders = _context.Orders.OrderBy(p => p.OrderID).ToList();
             foreach (Order order in allOrders)
             {
                 if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
@@ -368,10 +377,6 @@ namespace WarehouseManager.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-
-            //Incomplete orders at top of list
-            allOrders = _context.Orders.OrderBy(p => p.Completed).ToList();
-            allOrders = _context.Orders.OrderBy(p => p.Cancelled).ToList();
 
             return View(allOrders);
         }

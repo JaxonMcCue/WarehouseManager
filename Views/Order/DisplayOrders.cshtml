@@ -29,49 +29,87 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @if (item.Completed == true)
-            {
-                <td class="bg-success"></td>
-            }
-            else if (item.Cancelled == true)
-            {
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (item.Completed == false && item.Cancelled == false)
+                {
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderCost)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemCount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Completed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cancelled)
+                    </td>
+                    <td>
+                        <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a> |
+                        <a asp-action="CancelOrder" asp-route-id="@item.OrderID">Cancel</a>
+                    </td>
+                }
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (item.Completed == true)
+                {
+                    <td class="bg-success"></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderCost)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemCount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Completed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cancelled)
+                    </td>
+                    <td>
+                        <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a>
+                    </td>
+                }
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (item.Cancelled == true)
+                {
                 <td class="bg-danger"></td>
-            }
-            else
-            {
-                <td></td>
-            }
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Completed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cancelled)
-            </td>
-            @if (item.Cancelled != true && item.Completed != true)
-            {
-                <td>
-                    <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a> |
-                    <a asp-action="CancelOrder" asp-route-id="@item.OrderID">Cancel</a>
-                </td>
-            }
-            else
-            {
-                <td>
-                    <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a>
-                </td>
-            }
-        </tr>
-}
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderCost)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemCount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Completed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cancelled)
+                    </td>
+                    <td>
+                        <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>

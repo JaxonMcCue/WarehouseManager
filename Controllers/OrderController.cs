@@ -180,6 +180,25 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
+            User loggedInUser = null;
+            var users = _context.Users.ToList();
+
+            foreach (User user in users)
+            {
+                if (user.UserName == User.Identity.Name)
+                {
+                    loggedInUser = user;
+                }
+            }
+
+            if(!User.IsInRole("Admin") && !User.IsInRole("Sales"))
+            {
+                if (loggedInUser.CustomerID != order.CustomerID)
+                {
+                    return RedirectToAction("AccessDenied", "Account");
+                }
+            }
+
             var allOrderItems = _context.OrderItems.ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
@@ -221,6 +240,25 @@ namespace WarehouseManager.Controllers
             if (order == null)
             {
                 return NotFound();
+            }
+
+            User loggedInUser = null;
+            var users = _context.Users.ToList();
+
+            foreach (User user in users)
+            {
+                if (user.UserName == User.Identity.Name)
+                {
+                    loggedInUser = user;
+                }
+            }
+
+            if (!User.IsInRole("Admin") && !User.IsInRole("Sales"))
+            {
+                if (loggedInUser.CustomerID != order.CustomerID)
+                {
+                    return RedirectToAction("AccessDenied", "Account");
+                }
             }
 
             var allOrderItems = _context.OrderItems.ToList();

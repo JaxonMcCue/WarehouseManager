@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.ItemCount)
             </td>
             <td>
-                <a class="btn btn-outline-success" asp-action="CompleteOrder" asp-route-id="@item.OrderID">Complete</a>
+                <a asp-action="CompleteOrder" asp-route-id="@item.OrderID">View Order</a>
             </td>
         </tr>
 }

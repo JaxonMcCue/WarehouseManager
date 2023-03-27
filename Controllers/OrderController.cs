@@ -180,6 +180,7 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
+            //Check if customerid matches with orders customerid
             User loggedInUser = null;
             var users = _context.Users.ToList();
 
@@ -242,6 +243,7 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
+            //Check if customerid matches with orders customerid
             User loggedInUser = null;
             var users = _context.Users.ToList();
 
@@ -253,7 +255,7 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            if (!User.IsInRole("Admin") && !User.IsInRole("Sales"))
+            if (!User.IsInRole("Admin"))
             {
                 if (loggedInUser.CustomerID != order.CustomerID)
                 {

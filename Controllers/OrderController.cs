@@ -376,7 +376,7 @@ namespace WarehouseManager.Controllers
             return View(allOrders);
         }
 
-        [Authorize(Roles = "Sales")]
+        [Authorize(Roles = "Sales,Admin")]
         public async Task<IActionResult> DisplayIncompleteOrders()
         {
             //Remove empty orders
@@ -396,13 +396,68 @@ namespace WarehouseManager.Controllers
 
             foreach(Order order in allOrders)
             {
-                if(order.Completed == false)
+                if(order.Completed == false && order.Cancelled == false)
                 {
                     incompleteOrders.Add(order);
                 }
             }
 
+            incompleteOrders.OrderBy(p => p.OrderID);
+
             return View(incompleteOrders);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Sales,Admin")]
+        public async Task<IActionResult> CompleteOrder(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderID == id);
+            if(order == null)
+            {
+                return NotFound();
+            }
+
+            var allOrderItems = _context.OrderItems.ToList();
+            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
+            orderItems.Clear();
+
+            foreach(OrderItem item in allOrderItems)
+            {
+                if(item.OrderID == order.OrderID)
+                {
+                    orderItems.Add(item);
+                }
+            }
+
+            var customers = _context.Customers.ToList();
+            Customer orderCustomer = null;
+
+            foreach(Customer customer in customers)
+            {
+                if(customer.CustomerID == order.CustomerID)
+                {
+                    orderCustomer = customer;
+                }
+            }
+
+            ViewBag.customer = orderCustomer;
+            ViewBag.items = orderItems;
+            return View(order);
+        }
+
+        [HttpPost, ActionName("CompleteOrder")]
+        [Authorize(Roles = "Sales,Admin")]
+        public async Task<IActionResult> ConfirmComplete(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            order.Completed = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(DisplayIncompleteOrders));
         }
     }
 }

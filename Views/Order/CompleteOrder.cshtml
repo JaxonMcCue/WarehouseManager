@@ -1,26 +1,25 @@
 ﻿@model WarehouseManager.Models.Order
 
 @{
-    ViewData["Title"] = "CancelOrder";
+    ViewData["Title"] = "CompleteOrder";
 }
 
-<h1>Cancel Order</h1>
+<h1>Complete Order</h1>
 
-<h3>Are you sure you want to cancel this order?</h3>
 <div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            Customer
-        </dt>
-        <dd class="col-sm-10">
-            @ViewBag.customer.FirstName @ViewBag.customer.LastName
-        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.OrderID)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.OrderID)
+        </dd>
+        <dt class="col-sm-2">
+            Customer
+        </dt>
+        <dd class="col-sm-10">
+            @ViewBag.customer.FirstName @ViewBag.customer.LastName
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.OrderCost)
@@ -33,12 +32,6 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ItemCount)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Completed)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Completed)
         </dd>
     </dl>
 
@@ -77,9 +70,9 @@
         </table>
     </div>
 
-    <form asp-action="CancelOrderAdmin">
-        <input type="hidden" asp-for="OrderID" />
-        <input type="submit" value="Cancel Order" class="btn btn-danger" /> |
-        <a asp-action="DisplayOrders">Back to List</a>
+    <form asp-action="CompleteOrder">
+        <input type="hidden" asp-for="OrderID"/>
+        <input type="submit" value="Complete Order" class="btn btn-success" /> |
+        <a asp-action="DisplayIncompleteOrders">Back to List</a>
     </form>
 </div>

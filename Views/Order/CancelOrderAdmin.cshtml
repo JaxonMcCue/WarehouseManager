@@ -16,15 +16,12 @@
         <dd class="col-sm-10">
             @ViewBag.customer.FirstName @ViewBag.customer.LastName
         </dd>
-        @if (User.IsInRole("Admin"))
-        {
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.OrderID)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.OrderID)
-            </dd>
-        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderID)
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.OrderCost)
         </dt>
@@ -80,9 +77,9 @@
         </table>
     </div>
 
-    <form asp-action="CancelOrder">
+    <form asp-action="CancelOrderAdmin">
         <input type="hidden" asp-for="OrderID" />
         <input type="submit" value="Cancel Order" class="btn btn-danger" /> |
-        <a asp-action="ViewCustOrders">Back to List</a>
+        <a asp-action="DisplayOrders">Back to List</a>
     </form>
 </div>

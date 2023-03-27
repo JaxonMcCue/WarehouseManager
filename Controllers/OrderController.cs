@@ -19,88 +19,6 @@ namespace WarehouseManager.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public IActionResult AddOrder()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> AddOrder(Order newOrder)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        newOrder.OrderCost = 0;
-        //        newOrder.ItemCount = 0;
-        //        newOrder.Completed = false;
-        //        newOrder.Cancelled = false;
-        //        _context.Add(newOrder);
-        //        await _context.SaveChangesAsync();
-
-        //        ViewBag.AllItems = _context.Items.ToList();
-        //        return RedirectToAction(nameof(ViewItems));
-        //    }
-
-        //    return View(newOrder);
-        //}
-
-        //[HttpGet]
-        //public IActionResult ViewItems()
-        //{
-        //    var allItems = _context.Items.ToList();
-
-        //    Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
-
-        //    var orderItems = _context.OrderItems.ToList();
-        //    var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
-        //    selectedItems.Clear();
-
-        //    foreach (OrderItem selectedItem in orderItems)
-        //    {
-        //        if (selectedItem.OrderID == order.OrderID)
-        //        {
-        //            selectedItems.Add(selectedItem);
-        //        }
-        //    }
-        //    ViewBag.items = selectedItems;
-
-        //    return View(allItems);
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> AddItemToOrder(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var item = await _context.Items.FindAsync(id);
-        //    if (item == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    OrderItem orderItem = new OrderItem();
-
-        //    orderItem.ItemID = item.ItemID;
-
-        //    Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
-
-        //    //Update order cost and item count
-        //    orderItem.OrderID = order.OrderID;
-        //    order.OrderCost += Convert.ToDecimal(item.Price);
-        //    order.ItemCount += 1;
-        //    _context.Update(order);
-
-        //    _context.Add(orderItem);
-        //    await _context.SaveChangesAsync();
-
-
-        //    return RedirectToAction(nameof(ViewItems));
-        //}
-
         public async Task<IActionResult> AddOrder(Order newOrder)
         {
             if (ModelState.IsValid)
@@ -308,6 +226,19 @@ namespace WarehouseManager.Controllers
                 }
             }
 
+            //Get customer
+            var customers = _context.Customers.ToList();
+            Customer orderCustomer = null;
+
+            foreach (Customer customer in customers)
+            {
+                if (customer.CustomerID == order.CustomerID)
+                {
+                    orderCustomer = customer;
+                }
+            }
+
+            ViewBag.customer = orderCustomer;
             ViewBag.items = orderItems;
             return View(order);
         }
@@ -319,6 +250,11 @@ namespace WarehouseManager.Controllers
             var order = await _context.Orders.FindAsync(id);
             order.Cancelled = true;
             await _context.SaveChangesAsync();
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction(nameof(DisplayOrders));
+            }
+
             return RedirectToAction(nameof(ViewCustOrders));
         }
 
@@ -433,7 +369,9 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            allOrders = _context.Orders.ToList();
+            //Incomplete orders at top of list
+            allOrders = _context.Orders.OrderBy(p => p.Completed).ToList();
+            allOrders = _context.Orders.OrderBy(p => p.Cancelled).ToList();
 
             return View(allOrders);
         }

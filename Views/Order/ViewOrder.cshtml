@@ -60,21 +60,30 @@
         <tbody>
             @foreach (OrderItem item in ViewBag.items)
             {
-            <tr>
-                <td>
-                    @item.Item.ItemName
-                </td>
-                <td>
-                    @item.Item.ItemDescription
-                </td>
-                <td>
-                    @item.Item.Price
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        @item.Item.ItemName
+                    </td>
+                    <td>
+                        @item.Item.ItemDescription
+                    </td>
+                    <td>
+                        @item.Item.Price
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 </div>
+@if (User.IsInRole("Admin"))
+{
+    <div>
+        <a asp-action="DisplayOrders">Back to List</a>
+    </div>
+}
+else
+{
 <div>
     <a asp-action="ViewCustOrders">Back to List</a>
 </div>
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace WarehouseManager.Controllers
             _context = context;
         }
 
+        [Authorize(Roles="Admin")]
         public IActionResult DisplayItems()
         {
             return View(_context.Items.ToList());
@@ -31,6 +33,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult AddItem()
         {
             return View();
@@ -38,6 +41,7 @@ namespace WarehouseManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddItem(Item item)
         {
             if (ModelState.IsValid)
@@ -50,6 +54,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteItem(int? id)
         {
             if(id == null)
@@ -68,6 +73,7 @@ namespace WarehouseManager.Controllers
 
         [HttpPost, ActionName("DeleteItem")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteItemConfirmed(int id)
         {
             var item = await _context.Items.FindAsync(id);
@@ -76,6 +82,7 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(DisplayItems));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ViewItem(int? id)
         {
             if(id == null)
@@ -92,6 +99,7 @@ namespace WarehouseManager.Controllers
             return View(item);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditItem(int? id)
         {
             if (id == null)
@@ -110,6 +118,7 @@ namespace WarehouseManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditItem(int id, Item item)
         {
             if (id != item.ItemID)
@@ -140,6 +149,7 @@ namespace WarehouseManager.Controllers
             return View(item);
         }
 
+        [Authorize(Roles = "Admin,Sales")]
         public IActionResult EditAmt()
         {
             return View(_context.Items.ToList());
@@ -148,6 +158,7 @@ namespace WarehouseManager.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Item/ItemAmount")]
+        [Authorize(Roles = "Admin,Sales")]
         public async Task<IActionResult> EditAmount(Item newItem)
         {
             var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == newItem.ItemID);
@@ -179,6 +190,7 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(EditAmt));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string searchString)
         {
             if (!String.IsNullOrEmpty(searchString))
@@ -189,6 +201,7 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(DisplayItems));
         }
 
+        [Authorize(Roles = "Admin,Sales")]
         public async Task<IActionResult> SearchAmt(string searchString)
         {
             if (!String.IsNullOrEmpty(searchString))
@@ -199,6 +212,7 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(EditAmt));
         }
 
+        [Authorize(Roles = "Admin,Sales")]
         public async Task<IActionResult> ReportItem(int? id)
         {
             if (id == null)
@@ -224,6 +238,7 @@ namespace WarehouseManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Sales")]
         public async Task<IActionResult> ReportItem(DamagedItem damagedItem)
         {
             damagedItem.Date = DateTime.Now;
@@ -240,6 +255,7 @@ namespace WarehouseManager.Controllers
             return View(damagedItem);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Reports()
         {
             var report = _context.Damaged.Include(n => n.DamagedItems).OrderByDescending(d => d.Date);
@@ -248,6 +264,7 @@ namespace WarehouseManager.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveReport(int? id)
         {
             if (id == null)
@@ -266,6 +283,7 @@ namespace WarehouseManager.Controllers
 
         [HttpPost, ActionName("RemoveReport")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveReportConfirmed(int id)
         {
             var report = await _context.Damaged.FindAsync(id);

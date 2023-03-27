@@ -17,6 +17,7 @@ namespace WarehouseManager.Models
         [DisplayName("Description")]
         public String ItemDescription  { get; set; }
         [Required(ErrorMessage ="Please enter item price")]
+        [DisplayFormat(DataFormatString= "{0:C2}")]
         public Double Price { get; set; }
         [Required(ErrorMessage = "Please enter amount of your item")]
         [DisplayName("Number of Item")]

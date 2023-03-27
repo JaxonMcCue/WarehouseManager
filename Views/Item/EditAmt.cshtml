@@ -2,6 +2,10 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, AuthoringTagHelpers
 
+@{
+    ViewData["Title"] = "Edit Items";
+}
+
 <form asp-controller="ItemController" method="get">
     <p>
         Search: <input type="text" name="SearchString" />
@@ -44,7 +48,7 @@
                     @{
                         Item newItem = new Item();
                         newItem = item;
-                        }
+                    }
                     <form asp-action="EditAmount">
                         <input type="hidden" asp-for="@newItem.ItemID" />
                         <input asp-for="@newItem.ItemAmount" />

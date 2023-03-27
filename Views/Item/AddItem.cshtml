@@ -1,5 +1,9 @@
 ﻿@model WarehouseManager.Models.Item
 
+@{
+    ViewData["Title"] = "Add Item";
+}
+
 <h4>Item</h4>
 <hr />
 <div class="row">
@@ -13,7 +17,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ItemDescription" class="control-label"></label>
-                <textarea asp-for="ItemDescription" class="form-control" rows="3" ></textarea>
+                <textarea asp-for="ItemDescription" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="ItemDescription" class="text-danger"></span>
             </div>
             <div class="form-group">

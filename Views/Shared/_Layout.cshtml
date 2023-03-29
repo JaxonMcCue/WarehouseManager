@@ -24,19 +24,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="ViewCustOrders">Orders</a>
                         </li>
-                        @if (!User.IsInRole("Sales") && !User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="ViewCustOrders">Orders</a>
-                            </li>
-                        }
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="DisplayOrders">Orders</a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="DisplayItems">Items</a>
                             </li>
@@ -47,10 +38,10 @@
                         @if (User.IsInRole("Sales") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="DisplayIncompleteOrders">To-Do</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="EditAmt">Item amount edits</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="EditAmt">Item Count</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="customer" asp-action="Index">Customer Contact</a>
                             </li>
                         }
                     </ul>
@@ -58,6 +49,10 @@
             </div>
         </nav>
     </header>
+    @if (User.IsInRole("Sales") || User.IsInRole("Admin"))
+    {
+        <partial name="_ControlsPartial" />
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

@@ -1,0 +1,17 @@
+﻿body {
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.col1 {
+    flex-shrink: 10;
+    margin-right: 5%;
+}
+
+.col2 {
+    flex-basis: 1;
+    width: 350px;
+}

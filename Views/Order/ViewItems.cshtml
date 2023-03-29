@@ -52,7 +52,15 @@
                             @Html.DisplayFor(modelItem => item.ItemAmount)
                         </td>
                         <td>
-                            <a asp-action="AddItemToOrder" asp-route-id="@item.ItemID">Add Item</a>
+                            @if (item.ItemAmount > 0)
+                            {
+                                <a asp-action="AddItemToOrder" asp-route-id="@item.ItemID">Add Item</a>
+
+                            }
+                            else
+                            {
+                                <p>Out of Stock</p>
+                            }
                         </td>
                     </tr>
                 }

@@ -357,7 +357,7 @@ namespace WarehouseManager.Controllers
         {
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
-            order.Cancelled = true;
+            _context.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ViewCustOrders));
         }
@@ -511,6 +511,107 @@ namespace WarehouseManager.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(DisplayIncompleteOrders));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Reorder(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderID == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var allOrderItems = _context.OrderItems.ToList();
+            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
+            orderItems.Clear();
+
+            foreach (OrderItem item in allOrderItems)
+            {
+                if (item.OrderID == order.OrderID)
+                {
+                    OrderItem newOrderItem = new OrderItem();
+                    newOrderItem.ItemID = item.ItemID;
+                    orderItems.Add(newOrderItem);
+                }
+            }
+
+            Order newOrder = new Order();
+
+            newOrder.CustomerID = order.CustomerID;
+            newOrder.OrderCost = 0;
+            newOrder.ItemCount = 0;
+            newOrder.Completed = false;
+            newOrder.Cancelled = false;
+
+            _context.Add(newOrder);
+            await _context.SaveChangesAsync();
+
+            newOrder = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
+
+            var newOrderItems = _context.OrderItems.Include(c => c.Item).ToList();
+            newOrderItems.Clear();
+
+            foreach (OrderItem item in orderItems)
+            {
+                item.OrderID = newOrder.OrderID;
+                newOrderItems.Add(item);
+            }
+
+            foreach (OrderItem item in newOrderItems)
+            {
+                _context.Add(item);
+            }
+            await _context.SaveChangesAsync();
+
+            newOrder.OrderCost = order.OrderCost;
+            newOrder.ItemCount = order.ItemCount;
+
+            Customer customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerID == newOrder.CustomerID);
+
+            ViewBag.customer = customer;
+            ViewBag.orderItems = newOrderItems;
+
+            return View(newOrder);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReorderConfirm(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderID == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var allOrderItems = _context.OrderItems.ToList();
+            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
+            orderItems.Clear();
+
+            foreach (OrderItem item in allOrderItems)
+            {
+                if (item.OrderID == order.OrderID)
+                {
+                    order.ItemCount += 1;
+                    order.OrderCost += Convert.ToDecimal(item.Item.Price);
+                    orderItems.Add(item);
+                }
+            }
+
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ViewCustOrders));
         }
     }
 }

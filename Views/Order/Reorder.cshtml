@@ -1,20 +1,13 @@
 ﻿@model WarehouseManager.Models.Order
 
 @{
-    ViewData["Title"] = "ViewOrder";
+    ViewData["Title"] = "Reorder";
 }
 
-<h1>Your Order</h1>
-@if (!User.IsInRole("Admin") && !User.IsInRole("Sales"))
-{
-    @if (Model.Completed == true)
-    {
-        <a asp-action="Reorder" asp-route-id="@Model.OrderID">Re-Order</a>
-        <br />
-    }
+<h1>New Order</h1>
 
-}
 <div>
+    <h4>Are you sure you want to re-order?</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -35,20 +28,9 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ItemCount)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Completed)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Completed)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Cancelled)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Cancelled)
-        </dd>
     </dl>
 </div>
+<br />
 <h4>Items:</h4>
 <div>
     <table class="table">
@@ -66,7 +48,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (OrderItem item in ViewBag.items)
+            @foreach (OrderItem item in ViewBag.orderItems)
             {
                 <tr>
                     <td>
@@ -83,15 +65,7 @@
         </tbody>
     </table>
 </div>
-@if (User.IsInRole("Admin"))
-{
-    <div>
-        <a asp-action="DisplayOrders">Back to List</a>
-    </div>
-}
-else
-{
-    <div>
-        <a asp-action="ViewCustOrders">Back to List</a>
-    </div>
-}
+<div>
+    <a class="btn btn-warning" asp-action="ReorderConfirm" asp-route-id="@Model.OrderID">Re-Order</a> |
+    <a asp-action="CancelNewOrder">Cancel Order</a>
+</div>

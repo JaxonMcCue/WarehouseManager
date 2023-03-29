@@ -35,7 +35,11 @@
                     <td>@user.UserName</td>
                     <td>@user.Email</td>
                     <td>
-                        @string.Join(", ", user.RoleNames)
+                    
+                      
+                            @string.Join(", ", user.RoleNames)
+                        
+
                     </td>
                     <td>
                         <form method="post" asp-action="AddToRole" asp-route-id="@user.Id">
@@ -50,7 +54,7 @@
                     <td>
                        
                         <form method="post" asp-action="RemoveRole" asp-route-id="@user.Id">
-                            @if (user == Model.Users.FirstOrDefault())
+                            @if (user == Model.Users.FirstOrDefault() || user.RoleNames.Count == 0)
                             {
                                 <select asp-for="RoleName" disabled>
                                     <option disabled selected value="">Select role</option>
@@ -63,8 +67,10 @@
                             {
                                 <select asp-for="RoleName">
                                     <option disabled selected value="">Select role</option>
-                                    <option Value="Admin">Admin</option>
-                                    <option Value="Sales">Sales</option>
+                                    @foreach (var role in user.RoleNames)
+                                {
+                                    <option value="@role">@role</option>
+                                } 
                                 </select>
                                 <button type="submit" class="btn btn-primary">Remove role</button>
                             }

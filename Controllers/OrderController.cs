@@ -501,6 +501,14 @@ namespace WarehouseManager.Controllers
         {
             var order = await _context.Orders.FindAsync(id);
             order.Completed = true;
+            var orderItems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
+            foreach(OrderItem oItem in orderItems)
+            {
+                var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == oItem.ItemID);
+                item.ItemAmount -= 1;
+                _context.Update(item);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(DisplayIncompleteOrders));
         }

@@ -11,5 +11,6 @@ namespace WarehouseManager.Models
         public int ItemID { get; set; }
         public Item Item { get; set; }
         public int OrderID { get; set; }
+        public int Count { get; set; }
     }
 }

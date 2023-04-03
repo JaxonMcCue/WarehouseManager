@@ -72,15 +72,11 @@ namespace WarehouseManager.Controllers
             return View(allItems);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> AddItemToOrder(int? id)
+        [HttpPost]
+        public async Task<IActionResult> AddItemToOrder(OrderItem OrderItem)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Items.FindAsync(id);
+            int count = OrderItem.Count;
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == OrderItem.ItemID);
             if (item == null)
             {
                 return NotFound();
@@ -92,15 +88,38 @@ namespace WarehouseManager.Controllers
 
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
+            var orderlist = _context.OrderItems.Where(o => o.OrderID == order.OrderID).FirstOrDefault(i => i.ItemID == item.ItemID);
+
+            //checks to see if item is in list, adds to count if there is, otherwise makes new instance
+            if (orderlist == null)
+            {
+                if(count > item.ItemAmount)
+                {
+                    count = item.ItemAmount;
+                }
+                orderItem.Count = count;
+                _context.Add(orderItem);
+            }
+            else
+            {
+                if ((orderlist.Count + count) > item.ItemAmount)
+                {
+                    count = item.ItemAmount - orderlist.Count;
+                }
+                orderlist.Count += count;
+                _context.Update(orderlist);
+            }
+
+
+
             //Update order cost and item count
             orderItem.OrderID = order.OrderID;
-            order.OrderCost += Convert.ToDecimal(item.Price);
-            order.ItemCount += 1;
+            order.OrderCost += Convert.ToDecimal(item.Price) * count;
+            order.ItemCount += count;
+
             _context.Update(order);
 
-            _context.Add(orderItem);
             await _context.SaveChangesAsync();
-
 
             return RedirectToAction(nameof(ViewItems));
         }
@@ -121,7 +140,7 @@ namespace WarehouseManager.Controllers
             var allOrders = _context.Orders.ToList();
             foreach (Order order in allOrders)
             {
-                if(order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
+                if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
                 {
                     _context.Remove(order);
                     await _context.SaveChangesAsync();
@@ -136,15 +155,15 @@ namespace WarehouseManager.Controllers
             //Get logged in user
             var users = _context.Users.ToList();
 
-            foreach(User user in users)
+            foreach (User user in users)
             {
-                if(user.UserName == User.Identity.Name)
+                if (user.UserName == User.Identity.Name)
                 {
                     loggedInUser = user;
                 }
             }
 
-            foreach(Order order in allOrders)
+            foreach (Order order in allOrders)
             {
                 if (order.CustomerID == loggedInUser.CustomerID) //User.CustomerID
                 {
@@ -169,7 +188,7 @@ namespace WarehouseManager.Controllers
 
         public IActionResult ViewOrder(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -192,7 +211,7 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            if(!User.IsInRole("Admin") && !User.IsInRole("Sales"))
+            if (!User.IsInRole("Admin") && !User.IsInRole("Sales"))
             {
                 if (loggedInUser.CustomerID != order.CustomerID)
                 {
@@ -206,7 +225,7 @@ namespace WarehouseManager.Controllers
 
             foreach (OrderItem item in allOrderItems)
             {
-                if(item.OrderID == order.OrderID)
+                if (item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
                 }
@@ -216,9 +235,9 @@ namespace WarehouseManager.Controllers
             var customers = _context.Customers.ToList();
             Customer orderCustomer = null;
 
-            foreach(Customer customer in customers)
+            foreach (Customer customer in customers)
             {
-                if(customer.CustomerID == order.CustomerID)
+                if (customer.CustomerID == order.CustomerID)
                 {
                     orderCustomer = customer;
                 }
@@ -382,8 +401,8 @@ namespace WarehouseManager.Controllers
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
             // Update order cost and item count
-            order.OrderCost -= Convert.ToDecimal(orderItem.Item.Price);
-            order.ItemCount -= 1;
+            order.OrderCost -= Convert.ToDecimal(orderItem.Item.Price) * orderItem.Count;
+            order.ItemCount -= orderItem.Count;
             _context.Update(order);
             await _context.SaveChangesAsync();
 
@@ -439,9 +458,9 @@ namespace WarehouseManager.Controllers
             var incompleteOrders = _context.Orders.ToList();
             incompleteOrders.Clear();
 
-            foreach(Order order in allOrders)
+            foreach (Order order in allOrders)
             {
-                if(order.Completed == false && order.Cancelled == false)
+                if (order.Completed == false && order.Cancelled == false)
                 {
                     incompleteOrders.Add(order);
                 }
@@ -462,7 +481,7 @@ namespace WarehouseManager.Controllers
             }
 
             var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderID == id);
-            if(order == null)
+            if (order == null)
             {
                 return NotFound();
             }
@@ -471,9 +490,9 @@ namespace WarehouseManager.Controllers
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
 
-            foreach(OrderItem item in allOrderItems)
+            foreach (OrderItem item in allOrderItems)
             {
-                if(item.OrderID == order.OrderID)
+                if (item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
                 }
@@ -482,9 +501,9 @@ namespace WarehouseManager.Controllers
             var customers = _context.Customers.ToList();
             Customer orderCustomer = null;
 
-            foreach(Customer customer in customers)
+            foreach (Customer customer in customers)
             {
-                if(customer.CustomerID == order.CustomerID)
+                if (customer.CustomerID == order.CustomerID)
                 {
                     orderCustomer = customer;
                 }
@@ -502,7 +521,7 @@ namespace WarehouseManager.Controllers
             var order = await _context.Orders.FindAsync(id);
             order.Completed = true;
             var orderItems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
-            foreach(OrderItem oItem in orderItems)
+            foreach (OrderItem oItem in orderItems)
             {
                 var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == oItem.ItemID);
                 item.ItemAmount -= 1;

@@ -54,7 +54,13 @@
                         <td>
                             @if (item.ItemAmount > 0)
                             {
-                                <a asp-action="AddItemToOrder" asp-route-id="@item.ItemID">Add Item</a>
+                                OrderItem orderItem = new OrderItem();
+                                orderItem.ItemID = item.ItemID;
+                                <form asp-action="AddItemToOrder">
+                                    <input type="hidden" asp-for="@orderItem.ItemID" />
+                                    <input asp-for="@orderItem.Count">
+                                    <input type="submit" value="Add Item" class="btn btn-primary" />
+                                </form>
 
                             }
                             else
@@ -82,6 +88,9 @@
                     <th>
                         Price
                     </th>
+                    <th>
+                        Amount
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -94,6 +103,9 @@
                         </td>
                         <td>
                             @item.Item.Price
+                        </td>
+                        <td>
+                            @item.Count
                         </td>
                         <td>
                             <a class="btn btn-danger" asp-action="RemoveItemFromOrder" asp-route-id="@item.ID">Remove</a>

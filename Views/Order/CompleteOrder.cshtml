@@ -71,8 +71,15 @@
     </div>
 
     <form asp-action="CompleteOrder">
-        <input type="hidden" asp-for="OrderID"/>
+        <input type="hidden" asp-for="OrderID" />
         <input type="submit" value="Complete Order" class="btn btn-success" /> |
-        <a asp-action="DisplayIncompleteOrders">Back to List</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="DisplayOrders">Back to Orders</a>
+        }
+        else
+        {
+            <a asp-action="DisplayIncompleteOrders">Back to Orders</a>
+        }
     </form>
 </div>

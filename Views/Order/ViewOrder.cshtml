@@ -4,15 +4,19 @@
     ViewData["Title"] = "ViewOrder";
 }
 
-<h1>Your Order</h1>
 @if (!User.IsInRole("Admin") && !User.IsInRole("Sales"))
 {
+    <h1>Your Order</h1>
     @if (Model.Completed == true)
     {
         <a asp-action="Reorder" asp-route-id="@Model.OrderID">Re-Order</a>
         <br />
     }
 
+}
+else
+{
+    <h1>View Order</h1>
 }
 <div>
     <hr />
@@ -86,12 +90,12 @@
 @if (User.IsInRole("Admin"))
 {
     <div>
-        <a asp-action="DisplayOrders">Back to List</a>
+        <a asp-action="DisplayOrders">Back to Orders</a>
     </div>
 }
 else
 {
     <div>
-        <a asp-action="ViewCustOrders">Back to List</a>
+        <a asp-action="ViewCustOrders">Back to Orders</a>
     </div>
 }

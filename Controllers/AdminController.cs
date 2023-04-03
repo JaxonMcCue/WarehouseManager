@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WarehouseManager.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WarehouseManager.Controllers
 {
+    [Authorize(Roles="Admin")]
     public class AdminController : Controller
     {
         private UserManager<User> userManager;

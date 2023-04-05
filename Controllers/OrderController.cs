@@ -194,6 +194,8 @@ namespace WarehouseManager.Controllers
                     loggedInUser = user;
                 }
             }
+                    
+            var missingItem = new List<Order>();
 
             foreach (Order order in allOrders)
             {
@@ -208,12 +210,22 @@ namespace WarehouseManager.Controllers
                         if (item.OrderID == order.OrderID)
                         {
                             orderItems.Add(item);
+                            var lookitem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                            if(lookitem.ItemAmount <= item.Count)
+                            {
+                                if (!missingItem.Contains(order))
+                                {
+                                    missingItem.Add(order);
+                                }
+                            }
                         }
                     }
 
                     custOrders.Add(order);
                 }
             }
+
+            ViewBag.Missing = missingItem;
 
             return View(custOrders);
         }
@@ -251,15 +263,18 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            var allOrderItems = _context.OrderItems.ToList();
+            var allOrderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID);
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
+            var missingItem = new List<OrderItem>();
 
             foreach (OrderItem item in allOrderItems)
             {
-                if (item.OrderID == order.OrderID)
+                orderItems.Add(item);
+                var lookItem = _context.Items.FirstOrDefault(i =>i.ItemID == item.ItemID);
+                if(lookItem.ItemAmount < item.Count)
                 {
-                    orderItems.Add(item);
+                    missingItem.Add(item);
                 }
             }
 
@@ -275,6 +290,7 @@ namespace WarehouseManager.Controllers
                 }
             }
 
+            ViewBag.Missing = missingItem;
             ViewBag.customer = orderCustomer;
             ViewBag.items = orderItems;
             return View(order);
@@ -533,6 +549,7 @@ namespace WarehouseManager.Controllers
             allOrders = _context.Orders.ToList();
             var incompleteOrders = _context.Orders.ToList();
             incompleteOrders.Clear();
+            var missingItem = new List<Order>();
 
             foreach (Order order in allOrders)
             {
@@ -540,10 +557,23 @@ namespace WarehouseManager.Controllers
                 {
                     incompleteOrders.Add(order);
                 }
+                var orderitems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
+                foreach(OrderItem item in orderitems)
+                {
+                    var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                    if(lookItem.ItemAmount < item.Count)
+                    {
+                        if (!missingItem.Contains(order))
+                        {
+                            missingItem.Add(order);
+                        }
+                    }
+                }
             }
 
             incompleteOrders.OrderBy(p => p.OrderID);
 
+            ViewBag.Missing = missingItem;
             return View(incompleteOrders);
         }
 
@@ -565,12 +595,18 @@ namespace WarehouseManager.Controllers
             var allOrderItems = _context.OrderItems.ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
+            var missingItem = new List<OrderItem>();
 
             foreach (OrderItem item in allOrderItems)
             {
                 if (item.OrderID == order.OrderID)
                 {
                     orderItems.Add(item);
+                    var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                    if (lookItem.ItemAmount < item.Count)
+                    {
+                        missingItem.Add(item);
+                    }
                 }
             }
 
@@ -585,6 +621,7 @@ namespace WarehouseManager.Controllers
                 }
             }
 
+            ViewBag.Missing = missingItem;
             ViewBag.customer = orderCustomer;
             ViewBag.items = orderItems;
             return View(order);

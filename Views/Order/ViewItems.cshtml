@@ -49,7 +49,14 @@
                             @Html.DisplayFor(modelItem => item.Price)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.ItemAmount)
+                            @if (item.ItemAmount >= 1)
+                            {
+                                @Html.DisplayFor(modelItem => item.ItemAmount)
+                            }
+                            else
+                            {
+                                <p>0</p>
+                            }
                         </td>
                         <td>
                             @if (item.ItemAmount > 0)

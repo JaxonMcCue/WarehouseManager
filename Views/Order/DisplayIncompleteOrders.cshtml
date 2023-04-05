@@ -9,6 +9,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.OrderID)
             </th>
@@ -22,21 +23,32 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemCount)
-            </td>
-            <td>
-                <a asp-action="CompleteOrder" asp-route-id="@item.OrderID">View Order</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (ViewBag.Missing.Contains(item))
+                {
+
+
+<td class="bg-danger"></td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderCost)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemCount)
+                </td>
+                <td>
+                    <a asp-action="CompleteOrder" asp-route-id="@item.OrderID">View Order</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

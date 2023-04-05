@@ -40,6 +40,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>
                         Item Name
                     </th>
@@ -58,6 +59,16 @@
                 @foreach (OrderItem item in ViewBag.items)
                 {
                     <tr>
+                        @if (ViewBag.Missing.Contains(item))
+                        {
+
+
+                            <td class="bg-danger">out of stock!</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
                         <td>
                             @item.Item.ItemName
                         </td>
@@ -77,8 +88,11 @@
     </div>
 
     <form asp-action="CompleteOrder">
-        <input type="hidden" asp-for="OrderID" />
-        <input type="submit" value="Complete Order" class="btn btn-success" /> |
+        @if (ViewBag.Missing.Count == 0)
+        {
+            <input type="hidden" asp-for="OrderID" />
+            <input type="submit" value="Complete Order" class="btn btn-success" />
+}
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="DisplayOrders">Back to Orders</a>

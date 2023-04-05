@@ -58,6 +58,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>
                     Item Name
                 </th>
@@ -76,6 +77,13 @@ else
             @foreach (OrderItem item in ViewBag.items)
             {
                 <tr>
+                    @if (ViewBag.Missing.Contains(item))
+                    {
+                    <td class="bg-danger">Out of Stock!</td>
+                    } else
+                    {
+                    <td></td>
+                    }
                     <td>
                         @item.Item.ItemName
                     </td>

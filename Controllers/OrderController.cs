@@ -76,6 +76,10 @@ namespace WarehouseManager.Controllers
         public async Task<IActionResult> AddItemToOrder(OrderItem OrderItem)
         {
             int count = OrderItem.Count;
+            if(count == 0)
+            {
+                return RedirectToAction(nameof(ViewItems));
+            }
             var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == OrderItem.ItemID);
             if (item == null)
             {
@@ -471,10 +475,10 @@ namespace WarehouseManager.Controllers
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
             // Update order cost and item count
-            order.OrderCost -= Convert.ToDecimal(orderItem.Item.Price) * orderItem.Count;
-            order.ItemCount -= orderItem.Count;
-            _context.Update(order);
-            await _context.SaveChangesAsync();
+            //order.OrderCost -= Convert.ToDecimal(orderItem.Item.Price) * orderItem.Count;
+            //order.ItemCount -= orderItem.Count;
+            //_context.Update(order);
+            //await _context.SaveChangesAsync();
 
             // Get order items for order
             var orderItems = _context.OrderItems.ToList();

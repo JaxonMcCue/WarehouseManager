@@ -77,7 +77,7 @@ else
             @foreach (OrderItem item in ViewBag.items)
             {
                 <tr>
-                    @if (ViewBag.Missing.Contains(item))
+                    @if (ViewBag.Missing.Contains(item) && Model.Completed == false)
                     {
                     <td class="bg-danger">Out of Stock!</td>
                     } else

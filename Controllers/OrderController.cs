@@ -144,6 +144,17 @@ namespace WarehouseManager.Controllers
                 {
                     _context.Remove(order);
                     await _context.SaveChangesAsync();
+
+                    var orderItems = _context.OrderItems.ToList();
+
+                    foreach (OrderItem item in orderItems)
+                    {
+                        if (item.OrderID == order.OrderID)
+                        {
+                            _context.Remove(item);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -343,6 +354,17 @@ namespace WarehouseManager.Controllers
             _context.Remove(order);
             await _context.SaveChangesAsync();
 
+            var orderItems = _context.OrderItems.ToList();
+
+            foreach (OrderItem item in orderItems)
+            {
+                if (item.OrderID == order.OrderID)
+                {
+                    _context.Remove(item);
+                }
+            }
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(ViewCustOrders));
         }
 
@@ -377,6 +399,17 @@ namespace WarehouseManager.Controllers
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
             _context.Remove(order);
+            await _context.SaveChangesAsync();
+
+            var orderItems = _context.OrderItems.ToList();
+
+            foreach (OrderItem item in orderItems)
+            {
+                if (item.OrderID == order.OrderID)
+                {
+                    _context.Remove(item);
+                }
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ViewCustOrders));
         }
@@ -434,6 +467,17 @@ namespace WarehouseManager.Controllers
                 {
                     _context.Remove(order);
                     await _context.SaveChangesAsync();
+
+                    var orderItems = _context.OrderItems.ToList();
+
+                    foreach (OrderItem item in orderItems)
+                    {
+                        if (item.OrderID == order.OrderID)
+                        {
+                            _context.Remove(item);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -450,6 +494,17 @@ namespace WarehouseManager.Controllers
                 if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
                 {
                     _context.Remove(order);
+                    await _context.SaveChangesAsync();
+
+                    var orderItems = _context.OrderItems.ToList();
+
+                    foreach (OrderItem item in orderItems)
+                    {
+                        if (item.OrderID == order.OrderID)
+                        {
+                            _context.Remove(item);
+                        }
+                    }
                     await _context.SaveChangesAsync();
                 }
             }

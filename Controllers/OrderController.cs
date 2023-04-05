@@ -110,18 +110,39 @@ namespace WarehouseManager.Controllers
                 _context.Update(orderlist);
             }
 
-
+            orderItem.OrderID = order.OrderID;
+            await _context.SaveChangesAsync();
 
             //Update order cost and item count
-            orderItem.OrderID = order.OrderID;
             order.OrderCost += Convert.ToDecimal(item.Price) * count;
             order.ItemCount += count;
 
             _context.Update(order);
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(ViewItems));
+        }
+
+        public async Task<IActionResult> AddOrderConfirm()
+        {
+            Order order = await _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefaultAsync();
+
+            var orderItems = _context.OrderItems.Include(p => p.Item).ToList();
+
+            foreach(OrderItem item in orderItems)
+            {
+                if(item.OrderID == order.OrderID)
+                {
+                    order.ItemCount += item.Count;
+                    order.OrderCost += Convert.ToDecimal(item.Item.Price) * item.Count;
+                }
+            }
+
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ViewCustOrders));
         }
 
         [Authorize]

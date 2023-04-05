@@ -32,7 +32,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                @if (item.Completed == false && item.Cancelled == false)
+                @if (item.Completed == false && item.Cancelled == false && item.ItemCount > 0 && item.OrderCost > 0)
                 {
                     <td></td>
                     <td>

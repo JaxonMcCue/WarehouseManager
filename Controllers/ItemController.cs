@@ -252,7 +252,15 @@ namespace WarehouseManager.Controllers
             if (ModelState.IsValid)
             {
                 var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == damagedItem.ItemID);
-                item.ItemAmount -= damagedItem.Count;
+                if(item.ItemAmount >= damagedItem.Count)
+                {
+                    item.ItemAmount -= damagedItem.Count;
+                } else
+                {
+                    TempData["ErrorMessage"] = "Damaged item amount cannot be more than item count (" + item.ItemAmount + ").";
+                    return View(damagedItem);
+                }
+                
 
                 _context.Damaged.Add(damagedItem);
                 _context.Items.Update(item);

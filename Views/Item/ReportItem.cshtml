@@ -6,6 +6,11 @@
 
 <h1>Report Item</h1>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,10 +19,10 @@
             <input type="hidden" asp-for="ItemID" />
             <h4>@ViewBag.ItemName</h4>
             @*<div class="form-group">
-            <label asp-for="DamagedID" class="control-label"></label>
-            <input asp-for="DamagedID" class="form-control" />
-            <span asp-validation-for="DamagedID" class="text-danger"></span>
-        </div>*@
+                    <label asp-for="DamagedID" class="control-label"></label>
+                    <input asp-for="DamagedID" class="form-control" />
+                    <span asp-validation-for="DamagedID" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <label asp-for="Count" class="control-label"></label>
                 <input asp-for="Count" class="form-control" />
@@ -29,10 +34,10 @@
                 <span asp-validation-for="Desc" class="text-danger"></span>
             </div>
             @*<div class="form-group">
-            <label asp-for="Date" class="control-label"></label>
-            <input asp-for="Date" class="form-control" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-        </div>*@
+                    <label asp-for="Date" class="control-label"></label>
+                    <input asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

@@ -92,7 +92,7 @@
         {
             <input type="hidden" asp-for="OrderID" />
             <input type="submit" value="Complete Order" class="btn btn-success" />
-}
+        }
         @if (User.IsInRole("Admin"))
         {
             <a asp-action="DisplayOrders">Back to Orders</a>

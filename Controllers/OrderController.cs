@@ -561,12 +561,20 @@ namespace WarehouseManager.Controllers
             var allOrderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID).ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
+            var missingItem = new List<OrderItem>();
 
             foreach (OrderItem item in allOrderItems)
             {
                 OrderItem newOrderItem = new OrderItem();
                 newOrderItem.ItemID = item.ItemID;
+                newOrderItem.Count = item.Count;
                 orderItems.Add(newOrderItem);
+
+                var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                if (lookItem.ItemAmount < item.Count)
+                {
+                    missingItem.Add(newOrderItem);
+                }
             }
 
             Order newOrder = new Order();
@@ -602,6 +610,7 @@ namespace WarehouseManager.Controllers
 
             Customer customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerID == newOrder.CustomerID);
 
+            ViewBag.Missing = missingItem;
             ViewBag.customer = customer;
             ViewBag.orderItems = newOrderItems;
 

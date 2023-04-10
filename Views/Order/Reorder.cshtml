@@ -45,6 +45,7 @@
                 <th>
                     Price
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -60,12 +61,28 @@
                     <td>
                         @item.Item.Price
                     </td>
+                    @if (ViewBag.Missing.Contains(item))
+                    {
+                        <td class="bg-danger"></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                 </tr>
             }
         </tbody>
     </table>
 </div>
 <div>
-    <a class="btn btn-warning" asp-action="ReorderConfirm" asp-route-id="@Model.OrderID">Re-Order</a> |
+
+    @if (ViewBag.Missing.Count == 0)
+    {
+        <a class="btn btn-warning" asp-action="ReorderConfirm" asp-route-id="@Model.OrderID">Re-Order</a>
+    }
+    else
+    {
+        <p class="alert-warning">One or more items are out of stock!</p>
+    }
     <a asp-action="CancelNewOrder">Cancel Order</a>
 </div>

@@ -20,6 +20,7 @@ namespace WarehouseManager.Models
         [DisplayFormat(DataFormatString= "{0:C2}")]
         public Double Price { get; set; }
         [Required(ErrorMessage = "Please enter amount of your item")]
+        [Range(0, Double.PositiveInfinity, ErrorMessage = "Number of Item must be more than 0")]
         [DisplayName("Number of Item")]
         public int ItemAmount { get; set; }
 

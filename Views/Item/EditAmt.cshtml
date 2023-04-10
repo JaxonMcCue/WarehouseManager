@@ -57,7 +57,11 @@
                     </form>
                 </td>
                 <td>
-                    <a asp-action="ReportItem" asp-route-id="@item.ItemID">Report damaged item</a>
+                    @if (newItem.ItemAmount > 0)
+                    {
+                        <a asp-action="ReportItem" asp-route-id="@item.ItemID">Report damaged item</a>
+                    }
+
                 </td>
             </tr>
         }

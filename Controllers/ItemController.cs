@@ -169,7 +169,14 @@ namespace WarehouseManager.Controllers
 
             if(newItem.ItemAmount != item.ItemAmount)
             {
-                item.ItemAmount = newItem.ItemAmount;
+                if(newItem.ItemAmount >= 0)
+                {
+                    item.ItemAmount = newItem.ItemAmount;
+                } else
+                {
+                    item.ItemAmount = 0;
+                }
+                
                 try
                 {
                     _context.Update(item);

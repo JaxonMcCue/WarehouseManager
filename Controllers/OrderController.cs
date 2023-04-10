@@ -466,11 +466,10 @@ namespace WarehouseManager.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            allOrders = _context.Orders.ToList();
             var incompleteOrders = _context.Orders.Where(o => o.Completed == false && o.Cancelled == false).ToList();
             var missingItem = new List<Order>();
 
-            foreach (Order order in allOrders)
+            foreach (Order order in incompleteOrders)
             {
                 var orderitems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
                 foreach (OrderItem item in orderitems)
@@ -507,11 +506,10 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
-            var allOrderItems = _context.OrderItems.ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID).ToList();
             var missingItem = new List<OrderItem>();
 
-            foreach (OrderItem item in allOrderItems)
+            foreach (OrderItem item in orderItems)
             {
                 var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
                 if (lookItem.ItemAmount < item.Count)

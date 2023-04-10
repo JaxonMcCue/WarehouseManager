@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,6 +12,7 @@ using WarehouseManager.Models.ViewModels;
 
 namespace WarehouseManager.Controllers
 {
+    [Authorize(Roles = "Admin,Sales")]
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;

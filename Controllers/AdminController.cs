@@ -45,6 +45,12 @@ namespace WarehouseManager.Controllers
 
         public async Task<IActionResult> AddToRole(UserViewModel model, string id)
         {
+            if (model.RoleName == null)
+            {
+                TempData["ErrorMessage"] = "Must select a role to add.";
+                return RedirectToAction("Index");
+            }
+
             Role role = await roleManager.FindByNameAsync(model.RoleName);
             User user = await userManager.FindByIdAsync(id);
 
@@ -60,6 +66,12 @@ namespace WarehouseManager.Controllers
 
         public async Task<IActionResult> RemoveRole(UserViewModel model, string id)
         {
+            if (model.RoleName == null)
+            {
+                TempData["ErrorMessage"] = "Must select a role to remove.";
+                return RedirectToAction("Index");
+            }
+
             Role role = await roleManager.FindByNameAsync(model.RoleName);
             User user = await userManager.FindByIdAsync(id);
 

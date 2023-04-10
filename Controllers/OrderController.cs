@@ -56,17 +56,8 @@ namespace WarehouseManager.Controllers
 
             Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
-            var orderItems = _context.OrderItems.ToList();
-            var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
-            selectedItems.Clear();
+            var selectedItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
-            foreach (OrderItem selectedItem in orderItems)
-            {
-                if (selectedItem.OrderID == order.OrderID)
-                {
-                    selectedItems.Add(selectedItem);
-                }
-            }
             ViewBag.items = selectedItems;
 
             return View(allItems);
@@ -97,7 +88,7 @@ namespace WarehouseManager.Controllers
             //checks to see if item is in list, adds to count if there is, otherwise makes new instance
             if (orderlist == null)
             {
-                if(count > item.ItemAmount)
+                if (count > item.ItemAmount)
                 {
                     count = item.ItemAmount;
                 }
@@ -132,15 +123,12 @@ namespace WarehouseManager.Controllers
         {
             Order order = await _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefaultAsync();
 
-            var orderItems = _context.OrderItems.Include(p => p.Item).ToList();
+            var orderItems = _context.OrderItems.Include(p => p.Item).Where(i => i.OrderID == order.OrderID);
 
-            foreach(OrderItem item in orderItems)
+            foreach (OrderItem item in orderItems)
             {
-                if(item.OrderID == order.OrderID)
-                {
-                    order.ItemCount += item.Count;
-                    order.OrderCost += Convert.ToDecimal(item.Item.Price) * item.Count;
-                }
+                order.ItemCount += item.Count;
+                order.OrderCost += Convert.ToDecimal(item.Item.Price) * item.Count;
             }
 
             _context.Update(order);
@@ -170,14 +158,11 @@ namespace WarehouseManager.Controllers
                     _context.Remove(order);
                     await _context.SaveChangesAsync();
 
-                    var orderItems = _context.OrderItems.ToList();
+                    var orderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID);
 
                     foreach (OrderItem item in orderItems)
                     {
-                        if (item.OrderID == order.OrderID)
-                        {
-                            _context.Remove(item);
-                        }
+                        _context.Remove(item);
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -198,29 +183,23 @@ namespace WarehouseManager.Controllers
                     loggedInUser = user;
                 }
             }
-                    
+
             var missingItem = new List<Order>();
 
             foreach (Order order in allOrders)
             {
                 if (order.CustomerID == loggedInUser.CustomerID) //User.CustomerID
                 {
-                    var allOrderItems = _context.OrderItems.ToList();
-                    var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
-                    orderItems.Clear();
+                    var orderItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
-                    foreach (OrderItem item in allOrderItems)
+                    foreach (OrderItem item in orderItems)
                     {
-                        if (item.OrderID == order.OrderID)
+                        var lookitem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                        if (lookitem.ItemAmount < item.Count)
                         {
-                            orderItems.Add(item);
-                            var lookitem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
-                            if(lookitem.ItemAmount <= item.Count)
+                            if (!missingItem.Contains(order))
                             {
-                                if (!missingItem.Contains(order))
-                                {
-                                    missingItem.Add(order);
-                                }
+                                missingItem.Add(order);
                             }
                         }
                     }
@@ -267,32 +246,20 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            var allOrderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID);
-            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
-            orderItems.Clear();
+            var orderItems = _context.OrderItems.Include(i => i.Item).Where(i => i.OrderID == order.OrderID);
             var missingItem = new List<OrderItem>();
 
-            foreach (OrderItem item in allOrderItems)
+            foreach (OrderItem item in orderItems)
             {
-                orderItems.Add(item);
-                var lookItem = _context.Items.FirstOrDefault(i =>i.ItemID == item.ItemID);
-                if(lookItem.ItemAmount < item.Count)
+                var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                if (lookItem.ItemAmount < item.Count)
                 {
                     missingItem.Add(item);
                 }
             }
 
             //Get customer
-            var customers = _context.Customers.ToList();
-            Customer orderCustomer = null;
-
-            foreach (Customer customer in customers)
-            {
-                if (customer.CustomerID == order.CustomerID)
-                {
-                    orderCustomer = customer;
-                }
-            }
+            var orderCustomer = _context.Customers.FirstOrDefault(c => c.CustomerID == order.CustomerID);
 
             ViewBag.Missing = missingItem;
             ViewBag.customer = orderCustomer;
@@ -334,29 +301,10 @@ namespace WarehouseManager.Controllers
                 }
             }
 
-            var allOrderItems = _context.OrderItems.ToList();
-            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
-            orderItems.Clear();
-
-            foreach (OrderItem item in allOrderItems)
-            {
-                if (item.OrderID == order.OrderID)
-                {
-                    orderItems.Add(item);
-                }
-            }
+            var orderItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
             //Get customer
-            var customers = _context.Customers.ToList();
-            Customer orderCustomer = null;
-
-            foreach (Customer customer in customers)
-            {
-                if (customer.CustomerID == order.CustomerID)
-                {
-                    orderCustomer = customer;
-                }
-            }
+            var orderCustomer = _context.Customers.FirstOrDefault(c => c.CustomerID == order.CustomerID);
 
             ViewBag.customer = orderCustomer;
             ViewBag.items = orderItems;
@@ -395,14 +343,11 @@ namespace WarehouseManager.Controllers
             _context.Remove(order);
             await _context.SaveChangesAsync();
 
-            var orderItems = _context.OrderItems.ToList();
+            var orderItems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
 
             foreach (OrderItem item in orderItems)
             {
-                if (item.OrderID == order.OrderID)
-                {
-                    _context.Remove(item);
-                }
+                _context.Remove(item);
             }
             await _context.SaveChangesAsync();
 
@@ -417,17 +362,8 @@ namespace WarehouseManager.Controllers
 
                 Order order = _context.Orders.OrderByDescending(p => p.OrderID).FirstOrDefault();
 
-                var orderItems = _context.OrderItems.ToList();
-                var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
-                selectedItems.Clear();
+                var selectedItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
-                foreach (OrderItem selectedItem in orderItems)
-                {
-                    if (selectedItem.OrderID == order.OrderID)
-                    {
-                        selectedItems.Add(selectedItem);
-                    }
-                }
                 ViewBag.items = selectedItems;
 
                 return View("ViewItems", items);
@@ -442,14 +378,11 @@ namespace WarehouseManager.Controllers
             _context.Remove(order);
             await _context.SaveChangesAsync();
 
-            var orderItems = _context.OrderItems.ToList();
+            var orderItems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
 
             foreach (OrderItem item in orderItems)
             {
-                if (item.OrderID == order.OrderID)
-                {
-                    _context.Remove(item);
-                }
+                _context.Remove(item);
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ViewCustOrders));
@@ -481,17 +414,8 @@ namespace WarehouseManager.Controllers
             //await _context.SaveChangesAsync();
 
             // Get order items for order
-            var orderItems = _context.OrderItems.ToList();
-            var selectedItems = _context.OrderItems.Include(c => c.Item).ToList();
-            selectedItems.Clear();
+            var selectedItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
-            foreach (OrderItem selectedItem in orderItems)
-            {
-                if (selectedItem.OrderID == order.OrderID)
-                {
-                    selectedItems.Add(selectedItem);
-                }
-            }
             ViewBag.items = selectedItems;
 
             return RedirectToAction(nameof(ViewItems));
@@ -509,14 +433,11 @@ namespace WarehouseManager.Controllers
                     _context.Remove(order);
                     await _context.SaveChangesAsync();
 
-                    var orderItems = _context.OrderItems.ToList();
+                    var orderItems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
 
                     foreach (OrderItem item in orderItems)
                     {
-                        if (item.OrderID == order.OrderID)
-                        {
-                            _context.Remove(item);
-                        }
+                        _context.Remove(item);
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -525,47 +446,37 @@ namespace WarehouseManager.Controllers
             return View(allOrders);
         }
 
+
         [Authorize(Roles = "Sales,Admin")]
         public async Task<IActionResult> DisplayIncompleteOrders()
         {
             //Remove empty orders
-            var allOrders = _context.Orders.ToList();
+            var allOrders = _context.Orders.Where(o => o.OrderCost == 0 && o.OrderCost == 0 && o.Completed == false && o.Cancelled == false).ToList();
             foreach (Order order in allOrders)
             {
-                if (order.OrderCost == 0 && order.ItemCount == 0 && order.Completed == false && order.Cancelled == false)
+                _context.Remove(order);
+                await _context.SaveChangesAsync();
+
+                var orderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID).ToList();
+
+                foreach (OrderItem item in orderItems)
                 {
-                    _context.Remove(order);
-                    await _context.SaveChangesAsync();
-
-                    var orderItems = _context.OrderItems.ToList();
-
-                    foreach (OrderItem item in orderItems)
-                    {
-                        if (item.OrderID == order.OrderID)
-                        {
-                            _context.Remove(item);
-                        }
-                    }
-                    await _context.SaveChangesAsync();
+                    _context.Remove(item);
                 }
+                await _context.SaveChangesAsync();
             }
 
             allOrders = _context.Orders.ToList();
-            var incompleteOrders = _context.Orders.ToList();
-            incompleteOrders.Clear();
+            var incompleteOrders = _context.Orders.Where(o => o.Completed == false && o.Cancelled == false).ToList();
             var missingItem = new List<Order>();
 
             foreach (Order order in allOrders)
             {
-                if (order.Completed == false && order.Cancelled == false)
-                {
-                    incompleteOrders.Add(order);
-                }
                 var orderitems = _context.OrderItems.Where(o => o.OrderID == order.OrderID);
-                foreach(OrderItem item in orderitems)
+                foreach (OrderItem item in orderitems)
                 {
                     var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
-                    if(lookItem.ItemAmount < item.Count)
+                    if (lookItem.ItemAmount < item.Count)
                     {
                         if (!missingItem.Contains(order))
                         {
@@ -597,33 +508,19 @@ namespace WarehouseManager.Controllers
             }
 
             var allOrderItems = _context.OrderItems.ToList();
-            var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
-            orderItems.Clear();
+            var orderItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID).ToList();
             var missingItem = new List<OrderItem>();
 
             foreach (OrderItem item in allOrderItems)
             {
-                if (item.OrderID == order.OrderID)
+                var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
+                if (lookItem.ItemAmount < item.Count)
                 {
-                    orderItems.Add(item);
-                    var lookItem = _context.Items.FirstOrDefault(i => i.ItemID == item.ItemID);
-                    if (lookItem.ItemAmount < item.Count)
-                    {
-                        missingItem.Add(item);
-                    }
+                    missingItem.Add(item);
                 }
             }
 
-            var customers = _context.Customers.ToList();
-            Customer orderCustomer = null;
-
-            foreach (Customer customer in customers)
-            {
-                if (customer.CustomerID == order.CustomerID)
-                {
-                    orderCustomer = customer;
-                }
-            }
+            Customer orderCustomer = _context.Customers.FirstOrDefault(c => c.CustomerID == order.CustomerID);
 
             ViewBag.Missing = missingItem;
             ViewBag.customer = orderCustomer;
@@ -641,7 +538,7 @@ namespace WarehouseManager.Controllers
             foreach (OrderItem oItem in orderItems)
             {
                 var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == oItem.ItemID);
-                item.ItemAmount -= 1;
+                item.ItemAmount -= oItem.Count;
                 _context.Update(item);
             }
 
@@ -663,18 +560,15 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
-            var allOrderItems = _context.OrderItems.ToList();
+            var allOrderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID).ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
 
             foreach (OrderItem item in allOrderItems)
             {
-                if (item.OrderID == order.OrderID)
-                {
-                    OrderItem newOrderItem = new OrderItem();
-                    newOrderItem.ItemID = item.ItemID;
-                    orderItems.Add(newOrderItem);
-                }
+                OrderItem newOrderItem = new OrderItem();
+                newOrderItem.ItemID = item.ItemID;
+                orderItems.Add(newOrderItem);
             }
 
             Order newOrder = new Order();
@@ -730,18 +624,15 @@ namespace WarehouseManager.Controllers
                 return NotFound();
             }
 
-            var allOrderItems = _context.OrderItems.ToList();
+            var allOrderItems = _context.OrderItems.Where(i => i.OrderID == order.OrderID).ToList();
             var orderItems = _context.OrderItems.Include(c => c.Item).ToList();
             orderItems.Clear();
 
             foreach (OrderItem item in allOrderItems)
             {
-                if (item.OrderID == order.OrderID)
-                {
-                    order.ItemCount += 1;
-                    order.OrderCost += Convert.ToDecimal(item.Item.Price);
-                    orderItems.Add(item);
-                }
+                order.ItemCount += 1;
+                order.OrderCost += Convert.ToDecimal(item.Item.Price);
+                orderItems.Add(item);
             }
 
             _context.Update(order);

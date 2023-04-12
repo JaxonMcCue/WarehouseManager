@@ -49,7 +49,12 @@
                         <td>
                             <a asp-action="ViewOrder" asp-route-id="@item.OrderID">View Order</a> |
                             <a asp-action="CancelOrder" asp-route-id="@item.OrderID">Cancel</a>
+                            @if (ViewBag.Missing.Contains(item))
+                            {
+                               <span title="One or more items is out of stock" class="text-danger">&nbsp &#9432</span>
+                            }
                         </td>
+
                     }
                     @if (item.Cancelled == true)
                     {
@@ -58,10 +63,7 @@
                             <a class="text-danger" asp-action="RemoveOrder" asp-route-id="@item.OrderID">Remove</a>
                         </td>
                     }
-                    @if (ViewBag.Missing.Contains(item))
-                    {
-                        <td class="bg-danger"></td>
-                    }
+
                 </tr>
             }
 

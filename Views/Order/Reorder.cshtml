@@ -36,6 +36,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>
                     Item Name
                 </th>
@@ -45,13 +46,20 @@
                 <th>
                     Price
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (OrderItem item in ViewBag.orderItems)
             {
                 <tr>
+                    @if (ViewBag.Missing.Contains(item))
+                    {
+                        <td class="text-danger">OUT OF STOCK!</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                     <td>
                         @item.Item.ItemName
                     </td>
@@ -61,14 +69,6 @@
                     <td>
                         @item.Item.Price
                     </td>
-                    @if (ViewBag.Missing.Contains(item))
-                    {
-                        <td class="bg-danger"></td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
                 </tr>
             }
         </tbody>
@@ -82,7 +82,7 @@
     }
     else
     {
-        <p class="alert-warning">One or more items are out of stock!</p>
+        <p class="alert-warning">Unable to create order, one or more items are out of stock!</p>
     }
     <a asp-action="CancelNewOrder">Cancel Order</a>
 </div>

@@ -670,5 +670,11 @@ namespace WarehouseManager.Controllers
             ViewBag.Order = Id;
             return View(refund);
         }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult ViewRefunds()
+        {
+            return View(_context.Refund.OrderBy(r => r.Confirmed).ToList());
+        }
     }
 }

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WarehouseManager.Models.Refund>
+
+@{
+    ViewData["Title"] = "ViewRefunds";
+}
+
+<h1>ViewRefunds</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Order)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reason)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Confirmed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Order.OrderID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reason)
+            </td>
+            <td>
+                @if (item.Confirmed == true)
+                {
+                    <p>Accepted</p>
+                }else if(item.Confirmed == false)
+                {
+                    <p>Denied</p>
+                }
+                else
+                {
+                    <p>Undecided</p>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RefundID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.RefundID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.RefundID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

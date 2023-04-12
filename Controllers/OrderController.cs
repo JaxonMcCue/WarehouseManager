@@ -67,10 +67,11 @@ namespace WarehouseManager.Controllers
         public async Task<IActionResult> AddItemToOrder(OrderItem OrderItem)
         {
             int count = OrderItem.Count;
-            if(count == 0)
+            if(count <= 0)
             {
                 return RedirectToAction(nameof(ViewItems));
             }
+
             var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == OrderItem.ItemID);
             if (item == null)
             {

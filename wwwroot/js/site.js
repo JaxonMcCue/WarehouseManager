@@ -1,4 +1,16 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const toggleThemeBtn = document.querySelector('#toggle-theme-btn');
 
-// Write your JavaScript code.
+// Get the <html> element
+const html = document.querySelector('html');
+
+// Listen for a click event on the button
+toggleThemeBtn.addEventListener('click', () => {
+    // Toggle the data-bs-theme attribute on the <html> element
+    if (html.getAttribute('data-bs-theme') === 'light') {
+        html.setAttribute('data-bs-theme', 'dark');
+        $('#toggle-theme-btn').text('Light Mode');
+    } else {
+        html.setAttribute('data-bs-theme', 'light');
+        $('#toggle-theme-btn').text('Dark Mode');
+    }
+});

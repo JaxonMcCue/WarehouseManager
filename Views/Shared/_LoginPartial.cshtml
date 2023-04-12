@@ -1,45 +1,44 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using System.Security.Claims;
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
 
-<ul class="navbar-nav">
+<ul class="navbar-nav d-flex">
     @if (SignInManager.IsSignedIn(User))
     {
         @if (User.Identity.Name == "admin")
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" title="Manage">Hello @User.Identity.Name!</a>
+                <a class="nav-link" title="Manage">Hello @User.Identity.Name!</a>
             </li>
         }
         else
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="account" asp-action="MyAccount" title="Manage">Hello @User.Identity.Name!</a>
+                <a class="nav-link" asp-controller="account" asp-action="MyAccount" title="Manage">Manage Account</a>
             </li>
         }
         <li class="nav-item">
             <form class="form-inline" asp-controller="account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                <button type="submit" class="nav-link btn btn-link">Logout</button>
             </form>
         </li>
-        @if (User.IsInRole("Admin"))
-        {
-            <li class="nav-item">
-                <form class="form-inline" asp-controller="admin" asp-action="index">
-                    <button type="submit" class="nav-link btn btn-link text-dark">Admin DashBoard</button>
-                </form>
-            </li>
-        }
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
         </li>
     }
+    <li class="nav-item p-2 py-sm-1 col-sm-auto">
+        <div class="vr d-none d-sm-block h-100"> </div>
+        <hr class="d-sm-block my-2" />
+       
+    </li>
+    <li>
+        <button id="toggle-theme-btn" type="button" class="btn btn-secondary btn-link nav-link py-2 px-0 px-lg-2">Dark Mode</button>
+    </li>
 </ul>

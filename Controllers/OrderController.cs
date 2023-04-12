@@ -50,7 +50,7 @@ namespace WarehouseManager.Controllers
         }
 
         [HttpGet]
-        public IActionResult ViewItems()
+        public async Task<IActionResult> ViewItems()
         {
             var allItems = _context.Items.ToList();
 
@@ -58,7 +58,18 @@ namespace WarehouseManager.Controllers
 
             var selectedItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
+            decimal totalPrice = 0;
+            int itemCount = 0;
             ViewBag.items = selectedItems;
+            foreach (OrderItem orderItem in selectedItems)
+            {
+                Item item = await _context.Items.FirstOrDefaultAsync(p => p.ItemID == orderItem.ItemID);
+
+                totalPrice += Convert.ToDecimal(item.Price) * orderItem.Count;
+                itemCount += orderItem.Count;
+            }
+            ViewBag.orderItemCount = itemCount;
+            ViewBag.TotalPrice = totalPrice.ToString("c");
 
             return View(allItems);
         }
@@ -355,7 +366,7 @@ namespace WarehouseManager.Controllers
             return RedirectToAction(nameof(ViewCustOrders));
         }
 
-        public IActionResult Search(string searchString)
+        public async Task<IActionResult> Search(string searchString)
         {
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -366,6 +377,19 @@ namespace WarehouseManager.Controllers
                 var selectedItems = _context.OrderItems.Include(c => c.Item).Where(o => o.OrderID == order.OrderID);
 
                 ViewBag.items = selectedItems;
+
+                decimal totalPrice = 0;
+                int itemCount = 0;
+                ViewBag.items = selectedItems;
+                foreach (OrderItem orderItem in selectedItems)
+                {
+                    Item item = await _context.Items.FirstOrDefaultAsync(p => p.ItemID == orderItem.ItemID);
+
+                    totalPrice += Convert.ToDecimal(item.Price) * orderItem.Count;
+                    itemCount += orderItem.Count;
+                }
+                ViewBag.orderItemCount = itemCount;
+                ViewBag.TotalPrice = totalPrice.ToString("c");
 
                 return View("ViewItems", items);
             }

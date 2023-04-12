@@ -52,6 +52,7 @@ namespace WarehouseManager.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<DamagedItem> Damaged { get; set; }
+        public DbSet<Refund> Refund { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

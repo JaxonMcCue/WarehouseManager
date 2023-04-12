@@ -648,5 +648,27 @@ namespace WarehouseManager.Controllers
 
             return RedirectToAction(nameof(ViewCustOrders));
         }
+
+        [Authorize]
+        public IActionResult requestRefund(int Id)
+        {
+            ViewBag.Order = Id;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> requestRefund(Refund refund, int Id)
+        {
+            if (refund.Reason != "" && refund.Reason != null)
+            {
+                refund.OrderID = Id;
+                _context.Add(refund);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ViewOrder), new { id = Id });
+            }
+            ViewBag.Error = "A reason must be entered";
+            ViewBag.Order = Id;
+            return View(refund);
+        }
     }
 }

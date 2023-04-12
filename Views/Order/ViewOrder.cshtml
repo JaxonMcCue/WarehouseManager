@@ -79,10 +79,11 @@ else
                 <tr>
                     @if (ViewBag.Missing.Contains(item) && Model.Completed == false)
                     {
-                    <td class="text-danger">OUT OF STOCK!</td>
-                    } else
+                        <td class="text-danger">OUT OF STOCK!</td>
+                    }
+                    else
                     {
-                    <td></td>
+                        <td></td>
                     }
                     <td>
                         @item.Item.ItemName
@@ -111,5 +112,9 @@ else
 {
     <div>
         <a asp-action="ViewCustOrders">Back to Orders</a>
+        @if (!User.IsInRole("Sales") && Model.Completed == true)
+        {
+            <a asp-action="requestRefund" asp-route-id="@Model.OrderID">Request Refund</a>
+        }
     </div>
 }

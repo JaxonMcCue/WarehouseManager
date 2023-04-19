@@ -700,5 +700,20 @@ namespace WarehouseManager.Controllers
         {
             return View(_context.Refund.OrderBy(r => r.Confirmed).ToList());
         }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DecideRefund(int Id)
+        {
+            var refund = await _context.Refund.Include(o => o.Order).FirstOrDefaultAsync(i => i.RefundID == Id);
+            return View(refund);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DecideRefund(Refund refund)
+        {
+            _context.Update(refund);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("ViewRefunds");
+        }
     }
 }
